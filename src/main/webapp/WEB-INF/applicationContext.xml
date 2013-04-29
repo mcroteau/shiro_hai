@@ -12,19 +12,28 @@
 	
 	<context:component-scan base-package="org.aigua" />
 	
+	<bean id="userDao" class="org.aigua.dao.impl.mock.UserMockDaoImpl"/>
+	
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="url" value="jdbc:postgresql://localhost:5432/shiro_hai"/>
 		<property name="username" value="mcroteau"/>
 		<property name="password" value=""/>
 	</bean>
-	-->
-
-	<bean id="userDao" class="org.aigua.dao.impl.mock.UserMockDaoImpl"/>
-	<bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
-		<property name="dataSource" ref="userDao"/>
-		<property name="saltStyle" value="COLUMN"/>
+	
+	<bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.Sha256CredentialsMatcher">
+		<property name="hashIterations" value="1024"/>
+		<property name="storedCredentialsHexEncoded" value="false"/>
+		<property name="hashSalted" value="true"/>
 	</bean>
+	
+	<bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+		<constructor-arg index="0">
+			<ref bean="hashedCredentialsMatcher"/>
+		</constructor-arg>		
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 	    <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
@@ -34,5 +43,4 @@
 	    <!-- <property name="sessionMode" value="native"/> -->
 	</bean>
 
-		
 </beans>
