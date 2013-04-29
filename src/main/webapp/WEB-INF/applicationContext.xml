@@ -12,16 +12,19 @@
 	
 	<context:component-scan base-package="org.aigua" />
 	
-	<!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://${db.host}:5432/formo"/>
-		<property name="username" value="${db.username}"/>
-		<property name="password" value="${db.password}"/>
+		<property name="url" value="jdbc:postgresql://localhost:5432/shiro_hai"/>
+		<property name="username" value="mcroteau"/>
+		<property name="password" value=""/>
 	</bean>
 	-->
 
 	<bean id="userDao" class="org.aigua.dao.impl.mock.UserMockDaoImpl"/>
+	<bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+		<property name="dataSource" ref="userDao"/>
+		<property name="saltStyle" value="COLUMN"/>
+	</bean>
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 	    <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
@@ -30,42 +33,6 @@
 	         to use shiro's native sessions (see the JavaDoc for more): -->
 	    <!-- <property name="sessionMode" value="native"/> -->
 	</bean>
-	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 
-	<!-- Define the Shiro Realm implementation you want to use to connect to your back-end -->
-	<!-- security datasource: -->
-	<bean id="userRealm" class="org.apache.shiro.realm.text.TextConfigurationRealm">
-	  <property name="userDefinitions">
-	    <value>
-	      admin = admin, ROLE_ADMIN
-	    </value>
-	  </property>
-	</bean>
-	
-	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-	    <property name="securityManager" ref="securityManager"/>
-	    <!-- override these for application-specific URLs if you like: -->
-	    <property name="loginUrl" value="/login.jsp"/>
-	    <property name="successUrl" value="/home.jsp"/>
-	    <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
-	    <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean  -->
-	    <!-- defined will be automatically acquired and available via its beanName in chain        -->
-	    <!-- definitions, but you can perform instance overrides or name aliases here if you like: -->
-	    <!-- <property name="filters">
-	        <util:map>
-	            <entry key="anAlias" value-ref="someFilter"/>
-	        </util:map>
-	    </property> -->
-	    <property name="filterChainDefinitions">
-	        <value>
-	            # some example chain definitions:
-	            /admin/** = authc, roles[admin]
-	            /docs/** = authc, perms[document:read]
-	            /** = authc
-	            # more URL-to-FilterChain definitions here
-	        </value>
-	    </property>
-	</bean>
-	
 		
 </beans>
