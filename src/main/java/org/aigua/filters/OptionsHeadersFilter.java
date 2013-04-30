@@ -1,8 +1,8 @@
 package org.aigua.filters;
 
 import javax.servlet.*;
-import javax.servlet.HttpServletResponse;
-import javax.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 // http://raibledesigns.com/rd/entry/implementing_ajax_authentication_using_jquery
 // https://www.owasp.org/index.php/Main_Page
