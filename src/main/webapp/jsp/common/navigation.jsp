@@ -9,9 +9,9 @@
        		<a class="brand" href="javascript:">Greenfield</a>
        		<div class="nav-collapse collapse navbar-inverse-collapse pull-right">
          		<ul class="nav">
-           			<li class="${homeActive}"><a href="/greenfield/">Home</a></li>
-           			<li class="${listPropertyActive}"><a href="/greenfield/app/user/list?offset=0&max=10">List Users</a></li>
-           			<li class="${addPropertyActive}"><a href= "/greenfield/app/user/create">Add User</a></li>
+           			<li class="${homeActive}"><a href="/shiro_hai/">Home</a></li>
+           			<li class="${listPropertyActive}"><a href="/shiro_hai/app/user/list?offset=0&max=10">List Users</a></li>
+           			<li class="${addPropertyActive}"><a href= "/shiro_hai/app/user/create">Add User</a></li>
          		</ul>
        		</div>
     	</div>

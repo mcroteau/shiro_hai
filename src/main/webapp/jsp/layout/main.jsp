@@ -17,7 +17,7 @@
 	
 		<div class="row">
 			<div class="span12">
-				<a href="/greenfield/app/auth/login">Login</a>
+				<a href="/shiro_hai/app/auth/login">Login</a>
 			</div>
 		</div>
 

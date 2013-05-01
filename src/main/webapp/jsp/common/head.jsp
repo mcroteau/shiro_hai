@@ -1,17 +1,17 @@
 <title>${title}</title>
-<link href="/greenfield/js/lib/bootstrap/css/bootstrap.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/shiro_hai/js/lib/bootstrap/css/bootstrap.css" media="screen" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="/greenfield/js/lib/jquery/jquery.js"></script>
-<script type="text/javascript" src="/greenfield/js/lib/mustache/mustache.js"></script>
-<script type="text/javascript" src="/greenfield/js/lib/jstree/jstree.min.js"></script>
-<script type="text/javascript" src="/greenfield/js/lib/json2.js"></script>
+<script type="text/javascript" src="/shiro_hai/js/lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="/shiro_hai/js/lib/mustache/mustache.js"></script>
+<script type="text/javascript" src="/shiro_hai/js/lib/jstree/jstree.min.js"></script>
+<script type="text/javascript" src="/shiro_hai/js/lib/json2.js"></script>
 
 <script type="text/javascript">
 
 Types = {};
 TypesTransport = (function(){
 	
-	var baseUrl = '/greenfield/app/user/list';
+	var baseUrl = '/shiro_hai/app/user/list';
 	
 	function get(max, offset){
 		return $.ajax({

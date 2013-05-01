@@ -10,13 +10,13 @@
 	</listener>
 	
   	<servlet>
-  		<servlet-name>greenfield</servlet-name>
+  		<servlet-name>shiro_hai</servlet-name>
     	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     	<load-on-startup>1</load-on-startup>
   	</servlet>
 
   	<servlet-mapping>
-    	<servlet-name>greenfield</servlet-name>
+    	<servlet-name>shiro_hai</servlet-name>
     	<url-pattern>/app/*</url-pattern>
   	</servlet-mapping>
 

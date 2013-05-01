@@ -37,9 +37,9 @@
 					    for(int m = 0; m < total; m++){ 
 							if(m % resultsPerPage == 0){%>
 								<%if(activePage == currentPage){%>
-									<a href="/greenfield/app/user/list?offset=<%=m%>&max=<%=resultsPerPage%>&page=<%=currentPage%>" class="btn active"><%=currentPage%></a>
+									<a href="/shiro_hai/app/user/list?offset=<%=m%>&max=<%=resultsPerPage%>&page=<%=currentPage%>" class="btn active"><%=currentPage%></a>
 								<%}else{%>
-									<a href="/greenfield/app/user/list?offset=<%=m%>&max=<%=resultsPerPage%>&page=<%=currentPage%>" class="btn"><%=currentPage%></a>
+									<a href="/shiro_hai/app/user/list?offset=<%=m%>&max=<%=resultsPerPage%>&page=<%=currentPage%>" class="btn"><%=currentPage%></a>
 								<%}%>
 								
 							<%	

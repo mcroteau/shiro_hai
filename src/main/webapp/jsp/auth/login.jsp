@@ -16,7 +16,7 @@
 		<div class="span12">
 			
 			
-			<form action="/greenfield/app/auth/authenticate" method="post" class="form-horizontal"  >
+			<form action="/shiro_hai/app/auth/authenticate" method="post" class="form-horizontal"  >
 				<div class="control-group">
 					<label class="control-label">Username</label>
 					<div class="controls">
