@@ -12,27 +12,38 @@
 	
 	<context:component-scan base-package="org.aigua" />
 	
-	<bean id="userDao" class="org.aigua.dao.impl.mock.UserMockDaoImpl"/>
-	
+	<!-- 
+		<bean id="userDao" class="org.aigua.dao.impl.mock.UserMockDaoImpl"/>
+	 -->
+	 
+
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="url" value="jdbc:postgresql://${db.host}:5432/${db.database}"/>
 		<property name="username" value="${db.user}"/>
 		<property name="password" value="${db.password}"/>
 	</bean>
+		
+	<bean id="userDao" class="org.aigua.dao.impl.jdbc.UserJdbcDaoImpl">	
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
 	
+		
 	<bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.Sha256CredentialsMatcher">
 		<property name="hashIterations" value="1024"/>
 		<property name="storedCredentialsHexEncoded" value="false"/>
 		<property name="hashSalted" value="true"/>
 	</bean>
 	
-	<bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">	
+<!-- 	<bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">	
 		<property name="dataSource" ref="dataSource"/>
 		<property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>
 		<property name="permissionsQuery" value="${user_permissions_query}"/>
 		<property name="userRolesQuery" value="${user_roles_query}"/>
-	</bean>
+	</bean> -->
+	
+	
+	<bean id="shiroRealm" class="org.aigua.realm.ShiroHaiRealm"/>
 	
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">

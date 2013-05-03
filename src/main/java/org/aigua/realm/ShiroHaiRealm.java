@@ -1,7 +1,6 @@
-package realm;
+package org.aigua.realm;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;  
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -23,14 +22,6 @@ public class ShiroHaiRealm extends AuthorizingRealm {
 	@Autowired
 	private CredentialsMatcher credentialsMatcher;
 	
-	@Value("${auth_query}")
-	private String authenticationQuery;
-
-	@Value("${user_roles_query}")
-	private String userRolesQuery;
-	
-	@Value("${user_permissions_query}")
-	private String permissionsQuery;
 	
     protected boolean permissionsLookupEnabled = true;
 
@@ -41,11 +32,10 @@ public class ShiroHaiRealm extends AuthorizingRealm {
         String username = upToken.getUsername();
 
         if (username == null)  throw new AccountException("Null usernames are not allowed by this realm.");
-
         String password = userDao.getUserPassword(username);
-
+        System.out.println("44 doGetAuthenticationInfo " + username + " : " + password);
+                
         if (password == null) throw new UnknownAccountException("No account found for user [" + username + "]");
-
         AuthenticationInfo info = buildAuthenticationInfo(username, password.toCharArray());
 
         return info;

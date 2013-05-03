@@ -2,34 +2,29 @@ package org.aigua.dao.impl.mock;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+
 import org.aigua.domain.User;
 import org.aigua.dao.UserDao;
 
 public class UserMockDaoImpl implements UserDao {
 
-	/**
-		Mohandas Karamchand Gandhi
-		Jiddu Krishnamurti
-		Jesus
-		Budda - Siddhattha Gotama
-		Confucius - Kong Qiu
-		J Fresco
-		Muhammad - Abū al-Qāsim Muḥammad
-		Martin Luther King
-		Tesla Nikola
-		Epicurus
-	**/
-	
+
 	private static final int MAX = 100;
 	
-	private String[] firstNames = {"J", "M.K", "J", "J", "S", "K", "A", "M", "N", "Epicurus"};
-	private String[] lastNames = {"Fresco", "Gandhi", "Krishnamurti", "C", "Gotama", "Qiu", "al-Qasim Muhammad", "King", "Tesla", ""};
-
 
 	public User findById(int id){
 		return getMockUsers(1).get(1);
 	}
 	
+	public User findByUsername(String username) {
+		return getMockUsers(1).get(1);
+	}
+
+	public String getUserPassword(String username) {
+		return "PASSWORD";
+	}
+
 	public List<User> findAll(){
 		return getMockUsers(MAX);
 	}
@@ -57,6 +52,14 @@ public class UserMockDaoImpl implements UserDao {
 	public int count(){
 		return 10;
 	}
+
+	public Set<String> getUserRoles(String username) {
+		return null;
+	}
+
+	public Set<String> getUserPermissions(String username) {
+		return null;
+	}
 	
 	
 	private List<User> getMockUsers(int numberOfUsers){
@@ -70,13 +73,12 @@ public class UserMockDaoImpl implements UserDao {
 			mockUser.setEmail("mockuser" + k + "@email.com");
 			mockUser.setUsername("mockuser" + k);
 			mockUser.setPassword("password");
-			mockUser.setFirstName("first" + k);
-			mockUser.setLastName("last" + k);
+			mockUser.setName("name" + k);
 			users.add(mockUser);
 		}
 		
 		return users;
 	}
-	
+
 	
 }
