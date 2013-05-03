@@ -23,6 +23,10 @@
 		<property name="username" value="${db.user}"/>
 		<property name="password" value="${db.password}"/>
 	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 		
 	<bean id="userDao" class="org.aigua.dao.impl.jdbc.UserJdbcDaoImpl">	
 		<property name="dataSource" ref="dataSource"/>

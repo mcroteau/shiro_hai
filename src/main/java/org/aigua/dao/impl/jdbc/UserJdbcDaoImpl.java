@@ -3,10 +3,13 @@ package org.aigua.dao.impl.jdbc;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
+import java.util.HashSet;
+import org.apache.log4j.Logger;
 
 import org.aigua.dao.UserDao;
 import org.aigua.domain.User;
@@ -14,7 +17,7 @@ import org.aigua.domain.User;
 
 public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
-    private static final Logger logger = Logger.getLogger(UserJdbcDaoImpl.class.getName());
+    private static final Logger log = Logger.getLogger(UserJdbcDaoImpl.class.getName());
     
 	@Value("${paginate}")
 	private String paginate;
@@ -34,6 +37,9 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	@Value("${user.count.sql}")
 	private String countSql;
 
+	@Value("${user.next.id.sql}")
+	private String nextIdSql;
+
 	@Value("${user.update.sql}")
 	private String updateSql;
 
@@ -50,21 +56,26 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	private String userPermissionsSql;
 
 	private static final String REPLACE_ID = "{{ID}}";
+	private static final String REPLACE_USERNAME = "{{USERNAME}}";
 	
 	private static final String MAX    = "{{MAX}}";
 	private static final String OFFSET = "{{OFFSET}}";
 	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	
 	
 	public User findById(int id) {
-		User user = getJdbcTemplate().queryForObject(findByIdSql, new Object[] { id }, 
+		User user = jdbcTemplate.queryForObject(findByIdSql, new Object[] { id }, 
 			new BeanPropertyRowMapper<User>(User.class));
 		return user;
 	}
 
 	
 	public User findByUsername(String username) {
-		User user = getJdbcTemplate().queryForObject(findByUsernameSql, new Object[] { username }, 
+		System.out.println("USERNAME : " + username);
+		String searchSql = findByUsernameSql.replace(REPLACE_USERNAME, username);
+		User user = getJdbcTemplate().queryForObject(searchSql, new Object[] {}, 
 			new BeanPropertyRowMapper<User>(User.class));
 		return user;	
 	}
@@ -98,9 +109,9 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
 
 	public User save(User user) {
-		int id = getJdbcTemplate().queryForInt(countSql, new Object[0]);
+		int id = getJdbcTemplate().queryForInt(nextIdSql, new Object[0]);
 		getJdbcTemplate().update(insertSql, new Object[] { 
-			id, user.getName(), user.getEmail(), user.getUsername(), user.getPassword()  
+			id, user.getName(), user.getEmail(), user.getUsername(), user.getPasswordHash()  
 		});
 		User savedUser = findById(id);
 		return savedUser;
@@ -109,7 +120,7 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	
 	public User update(User user) {
 		getJdbcTemplate().update(updateSql, new Object[] { 
-			user.getName(), user.getEmail(), user.getUsername(), user.getPassword(), user.getId()  
+			user.getName(), user.getEmail(), user.getUsername(), user.getPasswordHash(), user.getId()  
 		});
 
 		return findById(user.getId());
@@ -130,17 +141,22 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
 	
 	public String getUserPassword(String username) {
-		User user = getJdbcTemplate().queryForObject(userAuthSql, new Object[] { username }, 
-				new BeanPropertyRowMapper<User>(User.class));	
-		return user.getPassword();
+		System.out.println("USERNAME : " + username);
+		User user = findByUsername(username);
+		// User user = findById(1);
+		System.out.println("user : " + user.getPasswordHash());
+		return user.getPasswordHash();
 	}
 
 	
 	@SuppressWarnings("unchecked")
-	public Set<String> getUserRoles(String username) {		
+	public Set<String> getUserRoles(String username) {	
 		User user = findByUsername(username);
 		String search = userRolesSql.replace(REPLACE_ID, Integer.toString(user.getId()));
-		Set<String> roles = (Set<String>)getJdbcTemplate().query(search, new BeanPropertyRowMapper<String>(String.class));
+		log.debug(search);
+		List<String> rolesList = getJdbcTemplate().queryForList(search, String.class);
+		log.debug(rolesList);
+		Set<String> roles = new HashSet(rolesList);
 		return roles;
 	}
 
@@ -149,7 +165,8 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	public Set<String> getUserPermissions(String username) {
 		User user = findByUsername(username);
 		String search = userPermissionsSql.replace(REPLACE_ID, Integer.toString(user.getId()));
-		Set<String> permissions = (Set<String>)getJdbcTemplate().query(search, new BeanPropertyRowMapper<String>(String.class));
+		List<String> permissionsList = getJdbcTemplate().queryForList(search, String.class);
+		Set<String> permissions = new HashSet(permissionsList);
 		return permissions;
 	}
 	

@@ -14,9 +14,7 @@
 	
 	<div class="row" id="form">
 		<div class="span12">
-			<h5>Creds</h5>
-			<p>${creds}</p>
-			<p>username : ${username}</p>
+			<p>${message}</p>
 		</div>	
 	</div>
 	

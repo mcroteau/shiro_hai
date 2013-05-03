@@ -55,18 +55,20 @@
 				<thead>
 					<tr>
 						<th>Id</th>
+						<th>Name</th>
+						<th>Email</th>
 						<th>Username</th>
-						<th>First Name</th>
-						<th>Last Name</th>
+						<th>Password Hash</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach var="user" items="${users}">
 						<tr>
 							<td>${user.id}</td>
+							<td>${user.name}</td>
+							<td>${user.email}</td>
 							<td>${user.username}</td>
-							<td>${user.firstName}</td>
-							<td>${user.lastName}</td>
+							<td>${user.passwordHash}</td>
 						</tr>									
 					</c:forEach>
 				</tbody>

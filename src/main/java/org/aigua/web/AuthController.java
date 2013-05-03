@@ -83,9 +83,8 @@ public class AuthController{
 			//into the login method
 			currentUser.login(token);
 			
-			System.out.println("\n\n << AUTHENTICATED >> \n\n");
+			model.addAttribute("message", "Welcome Back");
 			
-			model.addAttribute("currentUser", currentUser.getPrincipal());
 
 			
 		} catch ( UnknownAccountException uae ) { 
@@ -105,18 +104,14 @@ public class AuthController{
 	
 	
 	
-	@RequestMapping(value="/logout", method=RequestMethod.POST)
-	public @ResponseBody String logout(HttpServletRequest request){
-		
+	@RequestMapping(value="/logout", method=RequestMethod.GET)
+	public @ResponseBody String logout(ModelMap model, HttpServletRequest request){
 		Subject currentUser = SecurityUtils.getSubject();
-
-		//Authenticate the subject by passing
-		//the user name and password token
-		//into the login method
 		currentUser.logout();		
-		
-		return "logged out";
+		model.addAttribute("message", "Successfully logged out");
+		return "auth/success";
 	}
+	
 	
 	private Map<String, String> parse(String text){
 		Map<String, String> map = new HashMap<String, String>();

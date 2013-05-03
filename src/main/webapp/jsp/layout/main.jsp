@@ -15,20 +15,22 @@
 			</div>
 		</div>
 	
-		<div class="row">
-			<div class="span12">
-				<a href="/shiro_hai/app/auth/login">Login</a>
+		<shiro:notAuthenticated>
+			<div class="row">
+				<div class="span12">
+					<a href="/shiro_hai/app/auth/login">Login</a>
+				</div>
 			</div>
-		</div>
+		</shiro:notAuthenticated>
 
-		<div class="row">
-			<div class="span12">
-				<h2>subject : <shiro:notAuthenticated>not</shiro:notAuthenticated>
-				<shiro:authenticated>authenticated</shiro:authenticated></h2>
+		<shiro:authenticated>
+			<div class="row">
+				<div class="span12">
+					welcome back <shiro:principal/> ! | <a href="/shiro_hai/app/auth/logout">Logout</a>
+				</div>
 			</div>
-		</div>
+		</shiro:authenticated>
 		
-
 			
 		<sitemesh:write property='body'></sitemesh:write>
 	

@@ -33,6 +33,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 
+import static org.aigua.common.ShiroHaiConstants.*;
 
 @Controller
 @RequestMapping("/user")
@@ -46,9 +47,9 @@ public class UserController {
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
 		List<String> roles = new ArrayList<String>();
-		roles.add("admin");
+		roles.add(ADMIN_ROLE);
 		
-		if (!SecurityUtils.getSubject().hasRole("admin")){
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 	    	System.out.println("\n\nOperation not permitted");
 	      	throw new AuthorizationException("No Permission"); 
 	    }
@@ -97,8 +98,7 @@ public class UserController {
 					   @RequestParam(value="max", required = false ) String max,
 					   @RequestParam(value="page", required = false ) String page){
 		
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
-		
+	
 		if (!SecurityUtils.getSubject().isPermitted("user:2:create")){
 	    	System.out.println("\n\nOperation not permitted");
 	      	throw new AuthorizationException("No Permission"); 

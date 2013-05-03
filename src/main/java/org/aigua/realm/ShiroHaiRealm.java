@@ -10,11 +10,15 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 import org.aigua.dao.UserDao;
 
 
 public class ShiroHaiRealm extends AuthorizingRealm {
+
+    private static final Logger log = Logger.getLogger(ShiroHaiRealm.class.getName());
+
 
 	@Autowired
 	private UserDao userDao;
@@ -49,14 +53,19 @@ public class ShiroHaiRealm extends AuthorizingRealm {
         if (principals == null) throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 
         String username = (String) getAvailablePrincipal(principals);
-
+		
+		log.debug("username : " + username);
         Set<String> roleNames = userDao.getUserRoles(username);
+		log.debug("roleNames : " + roleNames);
+		
         Set<String> permissions = null;
         if (permissionsLookupEnabled) permissions = userDao.getUserPermissions(username);
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roleNames);
         info.setStringPermissions(permissions);
         
+		log.debug("info : " + info);
+		
         return info;
     }
 
