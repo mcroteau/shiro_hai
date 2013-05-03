@@ -6,11 +6,10 @@ public class User{
 	private int id;
 	private String username;
 	private String password;
-	
+
+	private String name;
 	private String email;
-	private String firstName;
-	private String lastName;
-	
+
 	
 	public int getId(){
 		return this.id;
@@ -39,24 +38,13 @@ public class User{
 	}
 	
 		
-	public String getFirstName(){
-		return this.firstName;
+	public String getName(){
+		return this.name;
 	}
 	
-	public void setFirstName(String firstName){
-		this.firstName = firstName;
+	public void setName(String name){
+		this.name = name;
 	}
-	
-	
-	
-	public String getLastName(){
-		return this.lastName;
-	}
-	
-	public void setLastName(String lastName){
-		this.lastName = lastName;
-	}
-	
 	
 	
 	public String getEmail(){
@@ -66,7 +54,6 @@ public class User{
 	public void setEmail(String email){
 		this.email = email;
 	}
-	
 	
 	
 }

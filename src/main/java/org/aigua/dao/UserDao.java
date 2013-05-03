@@ -2,6 +2,7 @@ package org.aigua.dao;
 
 import org.aigua.domain.User;
 import java.util.List;
+import java.util.Set;
 
 public interface UserDao {
 	
@@ -21,5 +22,10 @@ public interface UserDao {
 	
 	public int count();
 	
+	public String getUserPassword(String username);
+	
+	public Set<String> getUserRoles(String username);
+	
+	public Set<String> getUserPermissions(String username);
 	
 }

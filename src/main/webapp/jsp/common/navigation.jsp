@@ -6,7 +6,7 @@
          		<span class="icon-bar"></span>
          		<span class="icon-bar"></span>
        		</a>
-       		<a class="brand" href="javascript:">Greenfield</a>
+       		<a class="brand" href="javascript:">Shiro Hai</a>
        		<div class="nav-collapse collapse navbar-inverse-collapse pull-right">
          		<ul class="nav">
            			<li class="${homeActive}"><a href="/shiro_hai/">Home</a></li>

@@ -71,9 +71,6 @@ public class AuthController{
 		
 		
 		try{
-		
-			String username = "root";
-			String password = "secret";
 			
 			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), creds.get("password") );
 			token.setRememberMe(true);

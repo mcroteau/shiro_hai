@@ -23,7 +23,8 @@
 
 		<div class="row">
 			<div class="span12">
-				<h2>subject : <shiro:notAuthenticated>not</shiro:notAuthenticated></h2>
+				<h2>subject : <shiro:notAuthenticated>not</shiro:notAuthenticated>
+				<shiro:authenticated>authenticated</shiro:authenticated></h2>
 			</div>
 		</div>
 		

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -97,6 +96,13 @@ public class UserController {
 					   @RequestParam(value="offset", required = false ) String offset,
 					   @RequestParam(value="max", required = false ) String max,
 					   @RequestParam(value="page", required = false ) String page){
+		
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		
+		if (!SecurityUtils.getSubject().isPermitted("user:2:create")){
+	    	System.out.println("\n\nOperation not permitted");
+	      	throw new AuthorizationException("No Permission"); 
+	    }
 		
 		if(page == null){
 			page = "1";
