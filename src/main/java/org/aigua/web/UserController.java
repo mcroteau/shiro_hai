@@ -20,37 +20,43 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.SecurityUtils;
+
+import org.apache.log4j.Logger;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Date; 
 import java.util.List;
 import java.util.ArrayList;
+import java.net.URLDecoder;
+import java.net.URL;
 
 import org.aigua.domain.User;
 import org.aigua.dao.UserDao;
 
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.AuthorizationException;
 
 import static org.aigua.common.ShiroHaiConstants.*;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	
+
+	private static final Logger log = Logger.getLogger(UserController.class.getName());
+		
 	@Autowired
 	private UserDao userDao;	
 	
 	private static int RESULTS_PER_PAGE = 10;
 
+
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
-		List<String> roles = new ArrayList<String>();
-		roles.add(ADMIN_ROLE);
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-	    	System.out.println("\n\nOperation not permitted");
+	    	log.debug("\n\nOperation not permitted");
 	      	throw new AuthorizationException("No Permission"); 
 	    }
 	
@@ -60,12 +66,27 @@ public class UserController {
 	}
 
 
+
 	@RequestMapping(method=RequestMethod.POST)
-	public String saveUser(ModelMap model, @RequestBody String userJson){
+	public String saveUser(ModelMap model, HttpServletRequest request, @RequestBody String userString){
 		try {
 			
-			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(userJson, User.class);
+			log.debug(userString);
+			log.debug(request);
+			
+			String name = request.getParameter("name");
+			String email = request.getParameter("email");
+			String username = request.getParameter("username");
+			
+
+			User user = new User();
+			user.setName(name);
+			user.setEmail(email);
+			user.setUsername(username);
+			user.setPasswordHash(DEFAULT_PASSWORD);
+			
+			log.debug(user);
+			
 			User savedUser = userDao.save(user);		
 			model.addAttribute("user", savedUser);
 			
@@ -73,79 +94,11 @@ public class UserController {
 			e.printStackTrace();
 		}
 
-		return "user/action";
+		// list(0, RESULTS_PER_PAGE);
+		return "forward:/user/list";
 	}
 	
-	
-	@RequestMapping(value="/show/{id}", method=RequestMethod.GET)
-	public String show(ModelMap model,
-					   HttpServletRequest request, 
-					   @PathVariable String id){
-		
-		User user = userDao.findById(Integer.parseInt(id));
-		model.addAttribute("title", "Show User : " + id);
-		model.addAttribute("user", user);
-		
-		return "user/show";
-	}	
 
-
-	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
-	public String edit(ModelMap model,
-					   HttpServletRequest request, 
-					   @PathVariable String id){
-		
-		User user = userDao.findById(Integer.parseInt(id));
-		model.addAttribute("title", "Edit User : " + id);
-		model.addAttribute("user", user);
-		
-		return "user/edit";
-	}	
-
-
-
-	@RequestMapping(value="/list", method=RequestMethod.GET)
-	public String list(ModelMap model, 
-				       HttpServletRequest request, 
-					   @RequestParam(value="offset", required = false ) String offset,
-					   @RequestParam(value="max", required = false ) String max,
-					   @RequestParam(value="page", required = false ) String page){
-		
-	
-		if (!SecurityUtils.getSubject().isPermitted("user:2:create")){
-	    	System.out.println("\n\nOperation not permitted");
-	      	throw new AuthorizationException("No Permission"); 
-	    }
-		
-		if(page == null){
-			page = "1";
-		}						
-		
-		List<User> users;
-		
-		if(offset != null) {
-			int m = RESULTS_PER_PAGE;
-			if(max != null){
-				m = Integer.parseInt(max);
-			}
-			int o = Integer.parseInt(offset);
-			users = userDao.findAllOffset(m, o);	
-		}else{
-			users = userDao.findAll();	
-		} 
-		
-		int count = userDao.count();
-		
-		model.addAttribute("users", users);
-		model.addAttribute("total", count);
-		
-		model.addAttribute("title", "List Properties");
-		model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
-		model.addAttribute("activePage", page);
-		
-		return "user/list";
-	}
-	
 
 
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
@@ -188,8 +141,74 @@ public class UserController {
 	
 		return "user/action";
 		
+	}
+		
+	
+	@RequestMapping(value="/show/{id}", method=RequestMethod.GET)
+	public String show(ModelMap model,
+					   HttpServletRequest request, 
+					   @PathVariable String id){
+		
+		User user = userDao.findById(Integer.parseInt(id));
+		model.addAttribute("title", "Show User : " + id);
+		model.addAttribute("user", user);
+		
+		return "user/show";
 	}	
+
+
+	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
+	public String edit(ModelMap model,
+					   HttpServletRequest request, 
+					   @PathVariable String id){
+		
+		User user = userDao.findById(Integer.parseInt(id));
+		model.addAttribute("title", "Edit User : " + id);
+		model.addAttribute("user", user);
+		
+		return "user/edit";
+	}	
+
+
+
+	@RequestMapping(value="/list", method=RequestMethod.GET)
+	public String list(ModelMap model, 
+				       HttpServletRequest request, 
+					   @RequestParam(value="offset", required = false ) String offset,
+					   @RequestParam(value="max", required = false ) String max,
+					   @RequestParam(value="page", required = false ) String page){
+		
+		
+		if(page == null){
+			page = "1";
+		}						
+		
+		List<User> users;
+		
+		if(offset != null) {
+			int m = RESULTS_PER_PAGE;
+			if(max != null){
+				m = Integer.parseInt(max);
+			}
+			int o = Integer.parseInt(offset);
+			users = userDao.findAllOffset(m, o);	
+		}else{
+			users = userDao.findAll();	
+		} 
+		
+		int count = userDao.count();
+		
+		model.addAttribute("users", users);
+		model.addAttribute("total", count);
+		
+		model.addAttribute("title", "List Properties");
+		model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
+		model.addAttribute("activePage", page);
+		
+		return "user/list";
+	}
 	
 	
 
+	
 }

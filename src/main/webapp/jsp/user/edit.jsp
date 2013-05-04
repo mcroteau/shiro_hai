@@ -13,7 +13,7 @@
 	<div class="row" id="form">
 		<div class="span12">
 
-			<form  action="/shiro_hai/app/user" method="post" class="form-horizontal"  >
+			<form  action="/shiro_hai/app/user/save" method="post" class="form-horizontal"  >
 
 				<div class="control-group">
 					<label class="control-label">Username</label>
@@ -35,9 +35,7 @@
 						<input type="email" name="email" value="" placeholder="Email" id="email">	
 					</div>
 				</div>				
-				
-				
-				<input type="hidden" name="passwordHash" value="password"/>
+
 
 				<input type="submit" class="btn" id="login" value="Login"/>
 			</form>	

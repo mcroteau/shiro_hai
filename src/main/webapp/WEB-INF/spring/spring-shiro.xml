@@ -17,7 +17,7 @@
 	
 	
 	<bean id="shiroRealm" class="org.aigua.realm.ShiroHaiRealm">
-		<property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>	
+		<!-- <property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>	 -->
 	</bean>
 	
 	

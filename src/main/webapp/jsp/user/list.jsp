@@ -19,11 +19,13 @@
 		<div class="span12">
 			<h1>${title}</h1>
 			<h4>Count : ${total}</h4>
-			<h4>Results : ${resultsPerPage}</h4>
+			<p>message : ${message}</p>
 		</div>
 	</div>
 	
+	
 	<div class="row">
+		
 		<div class="span12">
 
 			<div class="btn-toolbar">
