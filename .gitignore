@@ -5,5 +5,10 @@
 *.war
 *.ear
 
+*.settings
+*.project
+*.classpath
+
+
 target/*
 
