@@ -9,10 +9,8 @@ import org.aigua.dao.UserDao;
 
 public class UserMockDaoImpl implements UserDao {
 
-
 	private static final int MAX = 100;
 	
-
 	public User findById(int id){
 		return getMockUsers(1).get(1);
 	}
@@ -72,7 +70,7 @@ public class UserMockDaoImpl implements UserDao {
 			mockUser.setId(k);
 			mockUser.setEmail("mockuser" + k + "@email.com");
 			mockUser.setUsername("mockuser" + k);
-			mockUser.setPassword("password");
+			mockUser.setPasswordHash("password");
 			mockUser.setName("name" + k);
 			users.add(mockUser);
 		}

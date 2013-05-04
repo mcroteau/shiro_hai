@@ -1,21 +1,22 @@
 package org.aigua.dao;
 
-public class RoleDao {
+import java.util.List;
+import org.aigua.domain.Role;
+
+public interface RoleDao {
 	
 	public int count();
 	
-	public User findById(int id);
+	public Role findById(int id);
 	
-	public User findByName(String name);
+	public List<Role> findAll();
 	
-	public List<User> findAll();
+	public List<Role> findAllOffset(int max, int offset);
 	
-	public List<User> findAllOffset(int max, int offset);
+	public Role save(Role role);
 	
-	public User save(Role role);
+	public Role update(Role role);
 	
-	public User update(Role role);
-	
-	public User delete(int id);
+	public Role delete(int id);
 	
 }

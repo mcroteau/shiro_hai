@@ -61,19 +61,18 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	private static final String MAX    = "{{MAX}}";
 	private static final String OFFSET = "{{OFFSET}}";
 	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	// @Autowired
+	// private JdbcTemplate jdbcTemplate;
 	
 	
 	public User findById(int id) {
-		User user = jdbcTemplate.queryForObject(findByIdSql, new Object[] { id }, 
+		User user = getJdbcTemplate().queryForObject(findByIdSql, new Object[] { id }, 
 			new BeanPropertyRowMapper<User>(User.class));
 		return user;
 	}
 
 	
 	public User findByUsername(String username) {
-		System.out.println("USERNAME : " + username);
 		String searchSql = findByUsernameSql.replace(REPLACE_USERNAME, username);
 		User user = getJdbcTemplate().queryForObject(searchSql, new Object[] {}, 
 			new BeanPropertyRowMapper<User>(User.class));
@@ -88,22 +87,14 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
 	
 	public List<User> findAllOffset(int max, int offset) {
-		try{
+		String sql = findAllSql;
+		sql+= " " + paginate;
+		sql = sql.replace(MAX, Integer.toString(max));
+		sql = sql.replace(OFFSET, Integer.toString(offset));
 
-			String sql = findAllSql;
-			sql+= " " + paginate;
-			sql = sql.replace(MAX, Integer.toString(max));
-			sql = sql.replace(OFFSET, Integer.toString(offset));
+		List<User> users = getJdbcTemplate().query(sql, new BeanPropertyRowMapper<User>(User.class));
 
-			System.out.println("find all " + sql);
-			List<User> types = getJdbcTemplate().query(sql, new BeanPropertyRowMapper<User>(User.class));
-
-			return types;
-
-		}catch (Exception e){
-			e.printStackTrace();
-		}	
-		return null;	
+		return users;
 	}
 	
 
@@ -141,32 +132,26 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
 	
 	public String getUserPassword(String username) {
-		System.out.println("USERNAME : " + username);
 		User user = findByUsername(username);
-		// User user = findById(1);
-		System.out.println("user : " + user.getPasswordHash());
 		return user.getPasswordHash();
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	public Set<String> getUserRoles(String username) {	
 		User user = findByUsername(username);
 		String search = userRolesSql.replace(REPLACE_ID, Integer.toString(user.getId()));
-		log.debug(search);
 		List<String> rolesList = getJdbcTemplate().queryForList(search, String.class);
 		log.debug(rolesList);
-		Set<String> roles = new HashSet(rolesList);
+		Set<String> roles = new HashSet<String>(rolesList);
 		return roles;
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	public Set<String> getUserPermissions(String username) {
 		User user = findByUsername(username);
 		String search = userPermissionsSql.replace(REPLACE_ID, Integer.toString(user.getId()));
 		List<String> permissionsList = getJdbcTemplate().queryForList(search, String.class);
-		Set<String> permissions = new HashSet(permissionsList);
+		Set<String> permissions = new HashSet<String>(permissionsList);
 		return permissions;
 	}
 	

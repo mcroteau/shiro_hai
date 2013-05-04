@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.aigua.domain.User;
-import org.aigua.dao.UserDao;
+import org.aigua.domain.Role;
+import org.aigua.dao.RoleDao;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
@@ -35,15 +35,16 @@ import org.apache.shiro.authz.AuthorizationException;
 
 import static org.aigua.common.ShiroHaiConstants.*;
 
+
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/role")
+public class RoleController {
 	
 	@Autowired
-	private UserDao userDao;	
+	private RoleDao roleDao;	
 	
 	private static int RESULTS_PER_PAGE = 10;
-
+	
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
 		List<String> roles = new ArrayList<String>();
@@ -54,56 +55,65 @@ public class UserController {
 	      	throw new AuthorizationException("No Permission"); 
 	    }
 	
-		model.addAttribute("title", "Create New User");
-		model.addAttribute("addUserActive", "active");
-		return "user/create";
+		model.addAttribute("title", "Create New Role");
+		model.addAttribute("addRoleActive", "active");
+		return "role/create";
 	}
-
-
+	
+	
 	@RequestMapping(method=RequestMethod.POST)
-	public String saveUser(ModelMap model, @RequestBody String userJson){
+	public String saveRole(ModelMap model, @RequestBody String roleJson){
 		try {
 			
 			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(userJson, User.class);
-			User savedUser = userDao.save(user);		
-			model.addAttribute("user", savedUser);
+			Role role = mapper.readValue(roleJson, Role.class);
+			Role savedRole = roleDao.save(role);		
+			model.addAttribute("role", savedRole);
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
-		return "user/action";
+	
+		return "role/action";
 	}
+	
+	
+	
+	
+	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
+	public String edit(ModelMap model,
+					   HttpServletRequest request, 
+					   @PathVariable String id){
+		
+		if (!SecurityUtils.getSubject().isPermitted("role:2:edit")){
+			System.out.println("\n\nOperation not permitted");
+		  	throw new AuthorizationException("No Permission"); 
+		}
+						
+		Role role = roleDao.findById(Integer.parseInt(id));
+		model.addAttribute("title", "Edit Role : " + id);
+		model.addAttribute("role", role);
+		
+		return "role/edit";
+	}	
+	
+	
 	
 	
 	@RequestMapping(value="/show/{id}", method=RequestMethod.GET)
 	public String show(ModelMap model,
 					   HttpServletRequest request, 
 					   @PathVariable String id){
+				
+		Role role = roleDao.findById(Integer.parseInt(id));
+		model.addAttribute("title", "Show Role : " + id);
+		model.addAttribute("role", role);
 		
-		User user = userDao.findById(Integer.parseInt(id));
-		model.addAttribute("title", "Show User : " + id);
-		model.addAttribute("user", user);
-		
-		return "user/show";
+		return "role/show";
 	}	
-
-
-	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
-	public String edit(ModelMap model,
-					   HttpServletRequest request, 
-					   @PathVariable String id){
-		
-		User user = userDao.findById(Integer.parseInt(id));
-		model.addAttribute("title", "Edit User : " + id);
-		model.addAttribute("user", user);
-		
-		return "user/edit";
-	}	
-
-
-
+	
+	
+	
 	@RequestMapping(value="/list", method=RequestMethod.GET)
 	public String list(ModelMap model, 
 				       HttpServletRequest request, 
@@ -112,16 +122,12 @@ public class UserController {
 					   @RequestParam(value="page", required = false ) String page){
 		
 	
-		if (!SecurityUtils.getSubject().isPermitted("user:2:create")){
-	    	System.out.println("\n\nOperation not permitted");
-	      	throw new AuthorizationException("No Permission"); 
-	    }
 		
 		if(page == null){
 			page = "1";
 		}						
 		
-		List<User> users;
+		List<Role> roles;
 		
 		if(offset != null) {
 			int m = RESULTS_PER_PAGE;
@@ -129,64 +135,64 @@ public class UserController {
 				m = Integer.parseInt(max);
 			}
 			int o = Integer.parseInt(offset);
-			users = userDao.findAllOffset(m, o);	
+			roles = roleDao.findAllOffset(m, o);	
 		}else{
-			users = userDao.findAll();	
+			roles = roleDao.findAll();	
 		} 
 		
-		int count = userDao.count();
+		int count = roleDao.count();
 		
-		model.addAttribute("users", users);
+		model.addAttribute("roles", roles);
 		model.addAttribute("total", count);
 		
 		model.addAttribute("title", "List Properties");
 		model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
 		model.addAttribute("activePage", page);
 		
-		return "user/list";
+		return "role/list";
 	}
 	
-
-
+	
+	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public String updateUser(ModelMap model, 
+	public String updateRole(ModelMap model, 
 							 @PathVariable String id,
-							 @RequestBody String userJson){
+							 @RequestBody String roleJson){
 		try {
 			
 			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(userJson, User.class);
+			Role role = mapper.readValue(roleJson, Role.class);
 			
-			user.setId(Integer.parseInt(id));
-			userDao.update(user);
+			role.setId(Integer.parseInt(id));
+			roleDao.update(role);
 			
-			User updatedUser = userDao.findById(Integer.parseInt(id));
-			model.addAttribute("updatedUser", updatedUser);
+			Role updatedRole = roleDao.findById(Integer.parseInt(id));
+			model.addAttribute("updatedRole", updatedRole);
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
-		return "user/action";
+		return "role/action";
 	}
-
+	
 	
 		
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public String deleteUser(ModelMap model, 
+	public String deleteRole(ModelMap model, 
 						     @PathVariable String id){
 			
 		System.out.println("\n\n id : " + Integer.parseInt(id) + "\n\n");
-		User user = userDao.findById(Integer.parseInt(id));	
+		Role role = roleDao.findById(Integer.parseInt(id));	
 		
-		System.out.println(user);
-		userDao.delete(user.getId());
+		System.out.println(role);
+		roleDao.delete(role.getId());
 		
-		List<User> users = userDao.findAll();
-	 	model.addAttribute("users", users);
+		List<Role> roles = roleDao.findAll();
+	 	model.addAttribute("roles", roles);
 	
-		return "user/action";
+		return "role/action";
 		
 	}	
 	
