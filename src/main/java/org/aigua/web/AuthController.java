@@ -15,17 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Date; 
-import java.util.List;
-
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -33,8 +27,18 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.AuthenticationException;
 
-
 import org.springframework.ui.ModelMap;
+
+import org.apache.log4j.Logger;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date; 
+import java.util.List;
+
+import org.aigua.domain.User;
+import org.aigua.dao.UserDao;
+
 
 @Controller
 @RequestMapping("/auth")
@@ -42,6 +46,8 @@ public class AuthController{
 	
 	private static final Logger log = Logger.getLogger(AuthController.class.getName());
 
+	@Autowired
+	private UserDao userDao;
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)
 	public String login(ModelMap model,
@@ -82,6 +88,10 @@ public class AuthController{
 			
 			model.addAttribute("message", "Welcome Back");
 			
+			User user = userDao.findByUsername(creds.get("username"));
+			
+			Session session = currentUser.getSession();
+			session.setAttribute( "user", user);
 
 			
 		} catch ( UnknownAccountException uae ) { 

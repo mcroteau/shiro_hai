@@ -28,6 +28,7 @@
 		<aspectjrt.version>1.6.11</aspectjrt.version>
 		<postgresql.version>9.1-901.jdbc4</postgresql.version>
 		<commons.validator.version>1.4.0</commons.validator.version>
+		<jsp.api.version>2.0</jsp.api.version>
 	</properties>
 
 	
@@ -40,11 +41,11 @@
 			<scope>test</scope>
 		</dependency>
 	
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${google.gson.version}</version>
-		</dependency>
+      	<dependency>
+      	  	<groupId>jspapi</groupId>
+      	  	<artifactId>jsp-api</artifactId>
+      	  	<version>${jsp.api.version}</version>
+      	</dependency>
 		
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>

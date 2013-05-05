@@ -1,5 +1,6 @@
 <%@ page import="java.lang.String" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+<%@ taglib prefix="shirohai" uri="/WEB-INF/taglib/ShiroHai.tld"%>
 <html>
 <head>
 	<%@include file="/jsp/common/head.jsp" %>
@@ -8,6 +9,9 @@
 <body>
 	<div class="container">
 		
+		<shirohai:userId/>
+		<shirohai:email/>
+		<shirohai:name/>
 		
 		<div class="row">
 			<div class="span12">
