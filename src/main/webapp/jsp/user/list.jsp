@@ -61,6 +61,7 @@
 						<th>Email</th>
 						<th>Username</th>
 						<th>Password Hash</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -71,6 +72,7 @@
 							<td>${user.email}</td>
 							<td>${user.username}</td>
 							<td>${user.passwordHash}</td>
+							<td><a href="/shiro_hai/app/user/show/${user.id}" title="Show ${user.name}" class="btn">Show</a>
 						</tr>									
 					</c:forEach>
 				</tbody>

@@ -39,7 +39,7 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 
 	@Value("${user.next.id.sql}")
 	private String nextIdSql;
-
+	
 	@Value("${user.update.sql}")
 	private String updateSql;
 
@@ -49,6 +49,9 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	@Value("${user.auth.sql}")
 	private String userAuthSql;
 
+	@Value("${user.save.role}")
+	private String insertUserRoleSql;
+	
 	@Value("${user.roles.sql}")
 	private String userRolesSql;
 	
@@ -130,11 +133,35 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	 	return id; 
 	}
 
-	
+		
 	public String getUserPassword(String username) {
 		User user = findByUsername(username);
 		return user.getPasswordHash();
 	}
+	
+	
+	public void saveUserRole(int userId, int roleId){
+		getJdbcTemplate().update(insertUserRoleSql, new Object[] { 
+			roleId, userId
+		});
+	}
+	
+	
+	public Set<String> getUserRoles(int id) {	
+		String search = userRolesSql.replace(REPLACE_ID, Integer.toString(id));
+		List<String> rolesList = getJdbcTemplate().queryForList(search, String.class);
+		Set<String> roles = new HashSet<String>(rolesList);
+		return roles;
+	}
+
+	
+	public Set<String> getUserPermissions(int id) {
+		String search = userPermissionsSql.replace(REPLACE_ID, Integer.toString(id));
+		List<String> permissionsList = getJdbcTemplate().queryForList(search, String.class);
+		Set<String> permissions = new HashSet<String>(permissionsList);
+		return permissions;
+	}
+	
 
 	
 	public Set<String> getUserRoles(String username) {	

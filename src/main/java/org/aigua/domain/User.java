@@ -1,5 +1,6 @@
 package org.aigua.domain;
 
+import java.util.Set;
 
 public class User{
 	
@@ -9,6 +10,9 @@ public class User{
 
 	private String name;
 	private String email;
+	
+	private Set<String> roles;
+	private Set<String> permissions;
 
 	
 	public int getId(){
@@ -53,6 +57,24 @@ public class User{
 	
 	public void setEmail(String email){
 		this.email = email;
+	}
+	
+	
+	public Set<String> getRoles(){
+		return roles;
+	}
+	
+	public void setRoles(Set<String> roles){
+		this.roles = roles;
+	}
+	
+	
+	public Set<String> getPermissions(){
+		return permissions;
+	}
+	
+	public void setPermissions(Set<String> permissions){
+		this.permissions = permissions;
 	}
 	
 	

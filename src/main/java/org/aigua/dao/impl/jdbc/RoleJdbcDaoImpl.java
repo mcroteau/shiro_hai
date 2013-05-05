@@ -29,6 +29,9 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	@Value("${role.find.id.sql}")
 	private String findByIdSql;
 	
+	@Value("${role.find.name.sql}")
+	private String findByNameSql;
+	
 	@Value("${role.find.all.sql}")
 	private String findAllSql;
 	
@@ -44,6 +47,8 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	private static final String MAX    = "{{MAX}}";
 	private static final String OFFSET = "{{OFFSET}}";
 	
+	private static final String REPLACE_NAME = "{{NAME}}";
+	
 	
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
@@ -57,6 +62,14 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	
 	public Role findById(int id) {
 		Role role = jdbcTemplate.queryForObject(findByIdSql, new Object[] { id }, 
+				new BeanPropertyRowMapper<Role>(Role.class));
+		return role;
+	}
+
+	
+	public Role findByName(String name) {
+		String search = findByNameSql.replace(REPLACE_NAME, name);
+		Role role = jdbcTemplate.queryForObject(search, new Object[] {}, 
 				new BeanPropertyRowMapper<Role>(Role.class));
 		return role;
 	}

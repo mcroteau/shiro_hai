@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Date; 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.net.URLDecoder;
 import java.net.URL;
@@ -37,6 +38,8 @@ import java.net.URL;
 import org.aigua.domain.User;
 import org.aigua.dao.UserDao;
 
+import org.aigua.domain.Role;
+import org.aigua.dao.RoleDao;
 
 import static org.aigua.common.ShiroHaiConstants.*;
 
@@ -48,6 +51,10 @@ public class UserController {
 		
 	@Autowired
 	private UserDao userDao;	
+		
+	@Autowired
+	private RoleDao roleDao;	
+	
 	
 	private static int RESULTS_PER_PAGE = 10;
 
@@ -87,18 +94,23 @@ public class UserController {
 			
 			log.debug(user);
 			
+			//save user
 			User savedUser = userDao.save(user);		
 			model.addAttribute("user", savedUser);
+			model.addAttribute("message", "successfully saved user : " + savedUser.getId());
+			
+			//save user roles
+			Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
+			userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
+			
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 
-		// list(0, RESULTS_PER_PAGE);
-		return "forward:/user/list";
+		return "redirect:user/list";
 	}
 	
-
 
 
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
@@ -150,6 +162,13 @@ public class UserController {
 					   @PathVariable String id){
 		
 		User user = userDao.findById(Integer.parseInt(id));
+		
+		Set<String> roles = userDao.getUserRoles(user.getId());
+		Set<String> permissions = userDao.getUserPermissions(user.getId());
+		
+		if(roles != null && !roles.isEmpty()) user.setRoles(roles);
+		if(permissions != null && !permissions.isEmpty()) user.setPermissions(permissions);
+		
 		model.addAttribute("title", "Show User : " + id);
 		model.addAttribute("user", user);
 		
@@ -163,6 +182,13 @@ public class UserController {
 					   @PathVariable String id){
 		
 		User user = userDao.findById(Integer.parseInt(id));
+		
+		Set<String> roles = userDao.getUserRoles(user.getId());
+		Set<String> permissions = userDao.getUserPermissions(user.getId());
+		
+		if(roles != null && !roles.isEmpty()) user.setRoles(roles);
+		if(permissions != null && !permissions.isEmpty()) user.setPermissions(permissions);
+		
 		model.addAttribute("title", "Edit User : " + id);
 		model.addAttribute("user", user);
 		

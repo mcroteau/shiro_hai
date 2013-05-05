@@ -9,6 +9,8 @@ public interface RoleDao {
 	
 	public Role findById(int id);
 	
+	public Role findByName(String name);
+	
 	public List<Role> findAll();
 	
 	public List<Role> findAllOffset(int max, int offset);

@@ -24,7 +24,13 @@ public interface UserDao {
 	
 	public String getUserPassword(String username);
 	
+	public void saveUserRole(int userId, int roleId);
+	
+	public Set<String> getUserRoles(int id);	
+	
 	public Set<String> getUserRoles(String username);
+	
+	public Set<String> getUserPermissions(int id);
 	
 	public Set<String> getUserPermissions(String username);
 	

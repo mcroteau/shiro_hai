@@ -23,7 +23,7 @@
 				</div>
 				
 				<div class="control-group">
-					<label class="control-label">Full Name</label>
+					<label class="control-label">Name</label>
 					<div class="controls">
 						<input type="text" name="name" value="" placeholder="Name" id="name"/>
 					</div>
@@ -39,7 +39,8 @@
 				
 				<input type="hidden" name="passwordHash" value="password"/>
 
-				<input type="submit" class="btn" id="login" value="Login"/>
+				<input type="submit" class="btn" value="Save"/>
+				
 			</form>	
 		</div>	
 	</div>

@@ -23,7 +23,7 @@
 				</div>
 				
 				<div class="control-group">
-					<label class="control-label">Full Name</label>
+					<label class="control-label">Name</label>
 					<div class="controls">
 						<input type="text" name="name" value="" placeholder="Name" id="name"/>
 					</div>
