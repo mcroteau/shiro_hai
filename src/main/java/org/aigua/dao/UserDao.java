@@ -28,6 +28,10 @@ public interface UserDao {
 	
 	public void saveUserPermission(int userId, String permission);
 	
+	public void deleteUserRoles(int userId);
+	
+	public void deleteUserPermissions(int userId);
+	
 	public Set<String> getUserRoles(int id);	
 	
 	public Set<String> getUserRoles(String username);

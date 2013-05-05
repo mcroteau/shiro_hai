@@ -6,6 +6,14 @@ public final class ShiroHaiConstants {
 	public static final String CUSTOMER_ROLE = "ROLE_CUSTOMER";
 	public static final String MANAGER_ROLE = "ROLE_MANAGER";
 	
-	public static final String DEFAULT_PASSWORD = "password";
+	public static final String DEFAULT_PASSWORD = "pass";
+	
+	public static final String MAX    = "{{MAX}}";
+	public static final String OFFSET = "{{OFFSET}}";
+	
+	public static final String REPLACE_ID = "{{ID}}";
+	public static final String REPLACE_USERNAME = "{{USERNAME}}";
+	
+	public static final String REPLACE_NAME = "{{NAME}}";
 	
 }

@@ -11,8 +11,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
- 
 import org.springframework.ui.ModelMap;
+
+
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.authc.UsernamePasswordToken;
+
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.SecurityUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,10 +30,6 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
-
-import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.SecurityUtils;
 
 import org.apache.log4j.Logger;
 
@@ -80,7 +85,9 @@ public class UserController {
 
 
 	@RequestMapping(method=RequestMethod.POST)
-	public String saveUser(ModelMap model, HttpServletRequest request){
+	public String saveUser(ModelMap model, 
+						   HttpServletRequest request,
+		   				   final RedirectAttributes redirect){
 		
 		try {
 			
@@ -102,7 +109,9 @@ public class UserController {
 			//save user
 			User savedUser = userDao.save(user);		
 			model.addAttribute("user", savedUser);
-			model.addAttribute("message", "successfully saved user : " + savedUser.getId());
+			
+			redirect.addFlashAttribute("user", savedUser);
+			redirect.addFlashAttribute("message", "successfully saved user : " + savedUser.getUsername());
 			
 			//save user roles
 			Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
@@ -125,41 +134,45 @@ public class UserController {
 	public String updateUser(ModelMap model,
 					   HttpServletRequest request,
 					   final RedirectAttributes redirect){
-						   
-		try {
 			
-			String id = request.getParameter("id");
-			String name = request.getParameter("name");
-			String email = request.getParameter("email");
-			String username = request.getParameter("username");
-			String password = request.getParameter("passwordHash");
+		String id = request.getParameter("id");
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		String username = request.getParameter("username");
+		String password = request.getParameter("passwordHash");
+		
+		if (isCustomerWithPermission(USER_UPDATE, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 			
-			if (isCustomerWithPermission(USER_UPDATE, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-				
-				User user = new User();
-				user.setId(Integer.parseInt(id));
-				user.setName(name);
-				user.setEmail(email);
-				user.setUsername(username);
-				user.setPasswordHash(password);
-
-				userDao.update(user);
+			User user = new User();
+			user.setId(Integer.parseInt(id));
+			user.setName(name);
+			user.setEmail(email);
+			user.setUsername(username);
+			user.setPasswordHash(password);
+        
+			userDao.update(user);
 			
-				User updatedUser = userDao.findById(Integer.parseInt(id));
-				redirect.addFlashAttribute("user", updatedUser);
-				redirect.addFlashAttribute("message", "successfully updated user : " + updatedUser.getId());
-				
-			}else{
-		    	log.debug("\n\nOperation not permitted");
-		      	throw new AuthorizationException("No Permission"); 
-			}
+			User updatedUser = userDao.findById(Integer.parseInt(id));
+			redirect.addFlashAttribute("user", updatedUser);
 			
-
 			
-		}catch(Exception e){
-			e.printStackTrace();
+		}else{
+			log.debug("\n\nOperation not permitted");
+		  	throw new AuthorizationException("No Permission"); 
 		}
-
+        
+        
+		if(isCustomerWithPermission(USER_UPDATE, id)){
+			
+			Subject currentUser = SecurityUtils.getSubject();
+			currentUser.logout();
+			
+			redirect.addFlashAttribute("message", "successfully updated your profile.  Please log in with new credentials");
+			
+			return "redirect:/app/auth/login";				
+		}
+		
+		redirect.addFlashAttribute("message", "successfully updated user : " + username);	
 		return "redirect:/app/user/list";
 	}
 
@@ -176,6 +189,10 @@ public class UserController {
 		}
 								
 		User user = userDao.findById(Integer.parseInt(id));	
+		
+		userDao.deleteUserRoles(user.getId());
+		userDao.deleteUserPermissions(user.getId());
+		
 		userDao.delete(user.getId());
 		
 	 	redirect.addFlashAttribute("user", user);

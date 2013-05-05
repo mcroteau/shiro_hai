@@ -13,6 +13,9 @@ import org.aigua.dao.RoleDao;
 import org.aigua.domain.Role;
 
 
+import static org.aigua.common.ShiroHaiConstants.*;
+
+
 public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 
 	private static final Logger log = Logger.getLogger(RoleJdbcDaoImpl.class.getName());
@@ -20,34 +23,30 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	@Value("${paginate}")
 	private String paginate;
 	
-	@Value("${role.count.sql}")
+	@Value("${role.count}")
 	private String countSql;
 	
-	@Value("${role.next.id.sql}")
+	@Value("${role.next.id}")
 	private String nextIdSql;
 	
-	@Value("${role.find.id.sql}")
+	@Value("${role.find.id}")
 	private String findByIdSql;
 	
-	@Value("${role.find.name.sql}")
+	@Value("${role.find.name}")
 	private String findByNameSql;
 	
-	@Value("${role.find.all.sql}")
+	@Value("${role.find.all}")
 	private String findAllSql;
 	
-	@Value("${role.save.sql}")
+	@Value("${role.save}")
 	private String insertSql;
 	
-	@Value("${role.update.sql}")
+	@Value("${role.update}")
 	private String updateSql;
 	
-	@Value("${role.delete.sql}")
+	@Value("${role.delete}")
 	private String deleteSql;
 	
-	private static final String MAX    = "{{MAX}}";
-	private static final String OFFSET = "{{OFFSET}}";
-	
-	private static final String REPLACE_NAME = "{{NAME}}";
 	
 	
 	@Autowired

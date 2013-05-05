@@ -1,5 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="z" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
 	<title>${title}</title>
@@ -12,10 +11,18 @@
 		</div>
 	</div>
 	
+	<c:if test="${not empty message}">
+		<div class="row">
+			<div class="span12">
+				<div class="alert alert-info">
+					${message}
+				</div>
+			</div>
+		</div>	
+	</c:if>
+	
 	<div class="row" id="form">
 		<div class="span12">
-			
-			
 			<form action="/shiro_hai/app/auth/authenticate" method="post" class="form-horizontal"  >
 				<div class="control-group">
 					<label class="control-label">Username</label>
@@ -30,9 +37,9 @@
 						<input type="password" name="password" value="" placeholder="****" id="password">	
 					</div>
 				</div>
-
-
+				
 				<input type="submit" class="btn" id="login" value="Login"/>
+				
 			</form>	
 		</div>	
 	</div>

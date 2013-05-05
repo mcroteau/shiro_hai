@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -41,39 +40,37 @@ import org.springframework.ui.ModelMap;
 @RequestMapping("/auth")
 public class AuthController{
 	
-	private Gson gson;
-	
-	public AuthController(){
-		System.out.println("\n\nInitializing AuthController\n\n");
-		gson = new Gson();
-	}
-	
+	private static final Logger log = Logger.getLogger(AuthController.class.getName());
+
 	
 	@RequestMapping(value="/login", method=RequestMethod.GET)
-	public String login(ModelMap model, HttpServletRequest request){
+	public String login(ModelMap model,
+		  				final RedirectAttributes redirect){
+			
 		model.addAttribute("title", "Login");
+		
+		Map<String, ?> flash = redirect.getFlashAttributes();
+		log.debug(flash);
+		
 		return "auth/login";
 	}	
 	
 	
 	
 	@RequestMapping(value="/authenticate", method=RequestMethod.POST)
-	public String authenticate(ModelMap model, @RequestBody String credsString){
-		
-		System.out.println("AUTHENTICATE ");
-		System.out.println(credsString);
+	public String authenticate(ModelMap model,	
+							   HttpServletRequest request, 
+							   final RedirectAttributes redirect, 
+							   @RequestBody String credsString){
 		
 		model.addAttribute("creds", credsString);
-		
 		Map<String, String> creds = parse(credsString);
 		model.addAttribute("username", creds.get("username"));
-		System.out.println(creds);
-		
 		
 		try{
 			
 			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), creds.get("password") );
-			token.setRememberMe(true);
+			// token.setRememberMe(true);
 			
 			//With most of Shiro, you'll always want to make sure you're working with the currently executing user, referred to as the subject
 			Subject currentUser = SecurityUtils.getSubject();
@@ -105,11 +102,15 @@ public class AuthController{
 	
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
-	public @ResponseBody String logout(ModelMap model, HttpServletRequest request){
+	public String logout(ModelMap model,	
+						 HttpServletRequest request, 
+						 final RedirectAttributes redirect){
+	
 		Subject currentUser = SecurityUtils.getSubject();
 		currentUser.logout();		
 		model.addAttribute("message", "Successfully logged out");
-		return "auth/success";
+		
+		return "redirect:/app/auth/login";
 	}
 	
 	
