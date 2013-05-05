@@ -47,7 +47,7 @@
 			
 			<a href="/shiro_hai/app/user/edit/${user.id}" class="btn">Edit</a>
 			
-			<form action="/shiro_hai/app/user/${delete.id}" method="DELETE">
+			<form action="/shiro_hai/app/user/${user.id}/delete" method="post">
 				<input type="submit" class="btn" value="Delete"/>
 			</form>
 

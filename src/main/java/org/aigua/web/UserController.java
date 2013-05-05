@@ -165,7 +165,7 @@ public class UserController {
 
 		
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/{id}/delete", method=RequestMethod.POST)
 	public String deleteUser(ModelMap model, 
 						     @PathVariable String id,
 					   		 final RedirectAttributes redirect){
