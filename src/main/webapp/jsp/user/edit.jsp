@@ -13,8 +13,10 @@
 	<div class="row" id="form">
 		<div class="span12">
 
-			<form  action="/shiro_hai/app/user" method="put" class="form-horizontal">
+			<form  action="/shiro_hai/app/user/${user.id}/update" method="POST" class="form-horizontal">
 
+				<input type="hidden" name="id" value="${user.id}"/>
+				
 				<div class="control-group">
 					<label class="control-label">Username</label>
 					<div class="controls">

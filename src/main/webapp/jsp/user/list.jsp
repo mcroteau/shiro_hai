@@ -19,11 +19,21 @@
 		<div class="span12">
 			<h1>${title}</h1>
 			<h4>Count : ${total}</h4>
-			<p>message : ${message}</p>
 		</div>
 	</div>
 	
-	
+
+	<c:if test="${not empty message}">
+		<div class="row">
+			<div class="span12">
+				<div class="alert alert-info">
+					${message}
+				</div>
+			</div>
+		</div>	
+	</c:if>
+
+
 	<div class="row">
 		
 		<div class="span12">

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+ 
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,10 +80,10 @@ public class UserController {
 
 
 	@RequestMapping(method=RequestMethod.POST)
-	public String saveUser(ModelMap model, HttpServletRequest request, @RequestBody String userString){
+	public String saveUser(ModelMap model, HttpServletRequest request){
+		
 		try {
 			
-			log.debug(userString);
 			log.debug(request);
 			
 			String name = request.getParameter("name");
@@ -119,22 +121,33 @@ public class UserController {
 	
 
 
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public String updateUser(ModelMap model, 
-							 @PathVariable String id,
-							 @RequestBody String userJson){
+	@RequestMapping(value="/{id}/update", method=RequestMethod.POST)
+	public String updateUser(ModelMap model,
+					   HttpServletRequest request,
+					   final RedirectAttributes redirect){
+						   
 		try {
+			
+			String id = request.getParameter("id");
+			String name = request.getParameter("name");
+			String email = request.getParameter("email");
+			String username = request.getParameter("username");
+			String password = request.getParameter("passwordHash");
 			
 			if (isCustomerWithPermission(USER_UPDATE, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 				
-				ObjectMapper mapper = new ObjectMapper();
-				User user = mapper.readValue(userJson, User.class);
-			
+				User user = new User();
 				user.setId(Integer.parseInt(id));
+				user.setName(name);
+				user.setEmail(email);
+				user.setUsername(username);
+				user.setPasswordHash(password);
+
 				userDao.update(user);
 			
 				User updatedUser = userDao.findById(Integer.parseInt(id));
-				model.addAttribute("updatedUser", updatedUser);
+				redirect.addFlashAttribute("user", updatedUser);
+				redirect.addFlashAttribute("message", "successfully updated user : " + updatedUser.getId());
 				
 			}else{
 		    	log.debug("\n\nOperation not permitted");
@@ -146,31 +159,30 @@ public class UserController {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
-		return "user/action";
+
+		return "redirect:/app/user/list";
 	}
 
 		
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public String deleteUser(ModelMap model, 
-						     @PathVariable String id){
+						     @PathVariable String id,
+					   		 final RedirectAttributes redirect){
 			
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 			log.debug("\n\nOperation not permitted");
 		  	throw new AuthorizationException("No Permission"); 
 		}
 								
-		System.out.println("\n\n id : " + Integer.parseInt(id) + "\n\n");
 		User user = userDao.findById(Integer.parseInt(id));	
-		
-		System.out.println(user);
 		userDao.delete(user.getId());
 		
-		List<User> users = userDao.findAll();
-	 	model.addAttribute("users", users);
-	
-		return "user/action";
+	 	redirect.addFlashAttribute("user", user);
+		redirect.addFlashAttribute("message", "successfully deleted user : " + user.getId());
+
+
+		return "redirect:/app/user/list";
 		
 	}
 		
