@@ -13,31 +13,38 @@
 	<div class="row" id="form">
 		<div class="span12">
 
-			<form  action="/shiro_hai/app/user/save" method="post" class="form-horizontal"  >
+			<form  action="/shiro_hai/app/user" method="put" class="form-horizontal">
 
 				<div class="control-group">
 					<label class="control-label">Username</label>
 					<div class="controls">
-						<input type="text" name="username" value="" placeholder="username" id="username"/>
+						<input type="text" name="username" value="${user.username}" placeholder="username" id="username"/>
 					</div>
 				</div>
 				
 				<div class="control-group">
 					<label class="control-label">Name</label>
 					<div class="controls">
-						<input type="text" name="name" value="" placeholder="Name" id="name"/>
+						<input type="text" name="name" value="${user.name}" placeholder="Name" id="name"/>
 					</div>
 				</div>
 
 				<div class="control-group">
 					<label class="control-label">Email</label>
 					<div class="controls">
-						<input type="email" name="email" value="" placeholder="Email" id="email">	
+						<input type="email" name="email" value="${user.email}" placeholder="Email" id="email">	
+					</div>
+				</div>			
+				
+				<div class="control-group">
+					<label class="control-label">Password</label>
+					<div class="controls">
+						<input type="password" name="passwordHash" value="" placeholder="****" id="passwordHash">	
 					</div>
 				</div>				
 
-
-				<input type="submit" class="btn" id="login" value="Login"/>
+				<input type="submit" class="btn" value="Update"/>
+				
 			</form>	
 		</div>	
 	</div>

@@ -26,6 +26,8 @@ public interface UserDao {
 	
 	public void saveUserRole(int userId, int roleId);
 	
+	public void saveUserPermission(int userId, String permission);
+	
 	public Set<String> getUserRoles(int id);	
 	
 	public Set<String> getUserRoles(String username);

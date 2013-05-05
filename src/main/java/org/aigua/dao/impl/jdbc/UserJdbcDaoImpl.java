@@ -52,6 +52,9 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	@Value("${user.save.role}")
 	private String insertUserRoleSql;
 	
+	@Value("${user.save.permission}")
+	private String insertUserPermissionSql;
+	
 	@Value("${user.roles.sql}")
 	private String userRolesSql;
 	
@@ -143,6 +146,13 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	public void saveUserRole(int userId, int roleId){
 		getJdbcTemplate().update(insertUserRoleSql, new Object[] { 
 			roleId, userId
+		});
+	}
+	
+	
+	public void saveUserPermission(int userId, String permission){
+		getJdbcTemplate().update(insertUserPermissionSql, new Object[] { 
+			userId, permission
 		});
 	}
 	

@@ -57,7 +57,10 @@ public class UserController {
 	
 	
 	private static int RESULTS_PER_PAGE = 10;
-
+	private static String USER_EDIT = "user:edit";
+	private static String USER_UPDATE = "user:update";
+	private static String DELIM = ":";
+	
 
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
@@ -103,6 +106,9 @@ public class UserController {
 			Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
 			userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
 			
+			userDao.saveUserPermission(savedUser.getId(), USER_EDIT + DELIM + savedUser.getId());
+			userDao.saveUserPermission(savedUser.getId(), USER_UPDATE + DELIM + savedUser.getId());
+			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -119,14 +125,23 @@ public class UserController {
 							 @RequestBody String userJson){
 		try {
 			
-			ObjectMapper mapper = new ObjectMapper();
-			User user = mapper.readValue(userJson, User.class);
+			if (isCustomerWithPermission(USER_UPDATE, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+				
+				ObjectMapper mapper = new ObjectMapper();
+				User user = mapper.readValue(userJson, User.class);
 			
-			user.setId(Integer.parseInt(id));
-			userDao.update(user);
+				user.setId(Integer.parseInt(id));
+				userDao.update(user);
 			
-			User updatedUser = userDao.findById(Integer.parseInt(id));
-			model.addAttribute("updatedUser", updatedUser);
+				User updatedUser = userDao.findById(Integer.parseInt(id));
+				model.addAttribute("updatedUser", updatedUser);
+				
+			}else{
+		    	log.debug("\n\nOperation not permitted");
+		      	throw new AuthorizationException("No Permission"); 
+			}
+			
+
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -135,13 +150,17 @@ public class UserController {
 		return "user/action";
 	}
 
-	
 		
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public String deleteUser(ModelMap model, 
 						     @PathVariable String id){
 			
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+			log.debug("\n\nOperation not permitted");
+		  	throw new AuthorizationException("No Permission"); 
+		}
+								
 		System.out.println("\n\n id : " + Integer.parseInt(id) + "\n\n");
 		User user = userDao.findById(Integer.parseInt(id));	
 		
@@ -181,16 +200,24 @@ public class UserController {
 					   HttpServletRequest request, 
 					   @PathVariable String id){
 		
-		User user = userDao.findById(Integer.parseInt(id));
+		if (isCustomerWithPermission(USER_EDIT, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 		
-		Set<String> roles = userDao.getUserRoles(user.getId());
-		Set<String> permissions = userDao.getUserPermissions(user.getId());
+			User user = userDao.findById(Integer.parseInt(id));
+			
+			Set<String> roles = userDao.getUserRoles(user.getId());
+			Set<String> permissions = userDao.getUserPermissions(user.getId());
 		
-		if(roles != null && !roles.isEmpty()) user.setRoles(roles);
-		if(permissions != null && !permissions.isEmpty()) user.setPermissions(permissions);
+			if(roles != null && !roles.isEmpty()) user.setRoles(roles);
+			if(permissions != null && !permissions.isEmpty()) user.setPermissions(permissions);
 		
-		model.addAttribute("title", "Edit User : " + id);
-		model.addAttribute("user", user);
+			model.addAttribute("title", "Edit User : " + id);
+			model.addAttribute("user", user);
+			
+		}else{
+			log.debug("\nOperation not permitted");
+		  	throw new AuthorizationException("No Permission"); 
+		}
+
 		
 		return "user/edit";
 	}	
@@ -234,7 +261,14 @@ public class UserController {
 		return "user/list";
 	}
 	
-	
+		
+	private boolean isCustomerWithPermission(String permission, String id){
+		log.debug("is customer : " + SecurityUtils.getSubject().hasRole(CUSTOMER_ROLE) + " && has permission " + permission + DELIM + id + " : " + SecurityUtils.getSubject().isPermitted(permission + DELIM + id));
+		return SecurityUtils.getSubject().hasRole(CUSTOMER_ROLE) && 
+			SecurityUtils.getSubject().isPermitted(permission + DELIM + id);
+		
+	}
+		
 
 	
 }
