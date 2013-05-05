@@ -12,7 +12,7 @@ WITH (
 	OIDS=FALSE
 );
 ALTER TABLE shiro_user
-	OWNER TO mcroteau;
+	OWNER TO postgres;
 
 
 CREATE TABLE shiro_role (
@@ -25,7 +25,7 @@ WITH (
   	OIDS=FALSE
 );
 ALTER TABLE shiro_role
-  	OWNER TO mcroteau;
+  	OWNER TO postgres;
   
 
 
@@ -40,7 +40,7 @@ WITH (
   	OIDS=FALSE
 );
 ALTER TABLE shiro_role_permissions
-  	OWNER TO mcroteau;
+  	OWNER TO postgres;
 	
 	  
 	  
@@ -56,7 +56,7 @@ WITH (
   	OIDS=FALSE
 );
 ALTER TABLE shiro_user_permissions
-  	OWNER TO mcroteau;
+  	OWNER TO postgres;
 
 
 
@@ -75,5 +75,5 @@ WITH (
   	OIDS=FALSE
 );
 ALTER TABLE shiro_user_roles
-  	OWNER TO mcroteau;
+  	OWNER TO postgres;
 

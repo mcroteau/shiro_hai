@@ -38,7 +38,11 @@ public class UserMockDaoImpl implements UserDao {
 	public User save(User user){
 		return getMockUsers(1).get(1);
 	}
-	
+
+	public void saveUserRole(int userId, int roleId){}
+		
+	public void saveUserPermission(int userId, String permission){}
+		
 	public User update(User user){
 		return getMockUsers(1).get(1);
 	}
@@ -51,6 +55,14 @@ public class UserMockDaoImpl implements UserDao {
 		return 10;
 	}
 
+	public Set<String> getUserRoles(int id) {
+		return null;
+	}
+
+	public Set<String> getUserPermissions(int id) {
+		return null;
+	}
+	
 	public Set<String> getUserRoles(String username) {
 		return null;
 	}
@@ -58,8 +70,7 @@ public class UserMockDaoImpl implements UserDao {
 	public Set<String> getUserPermissions(String username) {
 		return null;
 	}
-	
-	
+		
 	private List<User> getMockUsers(int numberOfUsers){
 	
 		if(numberOfUsers > MAX)numberOfUsers = MAX;

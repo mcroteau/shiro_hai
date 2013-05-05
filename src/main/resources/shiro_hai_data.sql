@@ -15,9 +15,13 @@ insert into shiro_role (id, name)
 		
 	
 insert into shiro_user_permissions (shiro_user_id, permissions_string)
-	values (2, 'user:2:*');
+	values (2, 'user:2:edit');
 insert into shiro_user_permissions (shiro_user_id, permissions_string)
-	values (3, 'user:3:*');
+	values (2, 'user:2:update');
+insert into shiro_user_permissions (shiro_user_id, permissions_string)
+	values (3, 'user:3:edit');
+insert into shiro_user_permissions (shiro_user_id, permissions_string)
+	values (3, 'user:3:update');
 
 
 insert into shiro_user_roles (shiro_role_id, shiro_user_id)
