@@ -42,7 +42,7 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @RequestMapping("/role")
 public class RoleController {
 	
-	private static final TAG = "ROLE_CONTROLLER";
+	private static final String TAG = "ROLE_CONTROLLER";
 	private static final Logger log = Logger.getLogger(RoleController.class.getName());
 	
 	@Autowired

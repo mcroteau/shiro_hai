@@ -48,7 +48,7 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @RequestMapping("/auth")
 public class AuthController{
 
-	private static final TAG = "AUTH_CONTROLLER";
+	private static final String TAG = "AUTH_CONTROLLER";
 	private static final Logger log = Logger.getLogger(AuthController.class.getName());
 
 	@Autowired

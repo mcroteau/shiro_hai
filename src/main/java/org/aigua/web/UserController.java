@@ -54,7 +54,7 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @RequestMapping("/user")
 public class UserController {
 
-	private static final TAG = "USER_CONTROLLER";
+	private static final String TAG = "USER_CONTROLLER";
 	private static final Logger log = Logger.getLogger(UserController.class.getName());
 		
 	@Autowired
