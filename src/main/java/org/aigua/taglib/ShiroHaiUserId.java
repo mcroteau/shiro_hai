@@ -30,8 +30,6 @@ public class ShiroHaiUserId extends TagSupport {
 			
 			User user = (User) session.getAttribute("user");
 			
-			log.debug("Taglib " + user);
-			
 			if(user != null) out.println(user.getId());	
 			
  

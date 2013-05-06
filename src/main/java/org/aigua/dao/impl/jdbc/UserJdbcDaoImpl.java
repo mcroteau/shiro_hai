@@ -191,7 +191,6 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 		User user = findByUsername(username);
 		String search = userRolesSql.replace(REPLACE_ID, Integer.toString(user.getId()));
 		List<String> rolesList = jdbcTemplate.queryForList(search, String.class);
-		log.debug(rolesList);
 		Set<String> roles = new HashSet<String>(rolesList);
 		return roles;
 	}

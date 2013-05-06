@@ -42,14 +42,15 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @RequestMapping("/role")
 public class RoleController {
 	
+	private static final TAG = "ROLE_CONTROLLER";
+	private static final Logger log = Logger.getLogger(RoleController.class.getName());
+	
 	@Autowired
 	private RoleDao roleDao;	
 	
 	
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
-		List<String> roles = new ArrayList<String>();
-		roles.add(ADMIN_ROLE);
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 	      	throw new AuthorizationException("No Permission"); 

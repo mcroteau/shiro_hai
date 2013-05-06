@@ -47,7 +47,8 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @Controller
 @RequestMapping("/auth")
 public class AuthController{
-	
+
+	private static final TAG = "AUTH_CONTROLLER";
 	private static final Logger log = Logger.getLogger(AuthController.class.getName());
 
 	@Autowired
@@ -114,7 +115,6 @@ public class AuthController{
 							   final RedirectAttributes redirect, 
 							   @RequestBody String credsString){
 		
-		model.addAttribute("creds", credsString);
 		Map<String, String> creds = parse(credsString);
 		model.addAttribute("username", creds.get("username"));
 		
@@ -122,16 +122,9 @@ public class AuthController{
 			
 			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), creds.get("password") );
 			// token.setRememberMe(true);
-			
-			//With most of Shiro, you'll always want to make sure you're working with the currently executing user, referred to as the subject
+
 			Subject currentUser = SecurityUtils.getSubject();
-			
-			//Authenticate the subject by passing
-			//the user name and password token
-			//into the login method
 			currentUser.login(token);
-			
-			model.addAttribute("message", "Welcome Back");
 			
 			User user = userDao.findByUsername(creds.get("username"));
 			

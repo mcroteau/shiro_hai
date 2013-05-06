@@ -55,7 +55,6 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	
 	public int count() {
 		int id = jdbcTemplate.queryForInt(countSql, new Object[0]);
-		log.debug("count id : " + id);
 	 	return id; 
 	}
 	

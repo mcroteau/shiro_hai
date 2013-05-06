@@ -54,6 +54,7 @@ import static org.aigua.common.ShiroHaiConstants.*;
 @RequestMapping("/user")
 public class UserController {
 
+	private static final TAG = "USER_CONTROLLER";
 	private static final Logger log = Logger.getLogger(UserController.class.getName());
 		
 	@Autowired
@@ -67,7 +68,6 @@ public class UserController {
 	public String create(ModelMap model, HttpServletRequest request){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-	    	log.debug("\n\nOperation not permitted");
 	      	throw new AuthorizationException("No Permission"); 
 	    }
 	
@@ -87,8 +87,6 @@ public class UserController {
 		  	throw new AuthorizationException("No Permission"); 
 		}
 		
-		log.debug(request);
-		
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		String username = request.getParameter("username");
@@ -99,8 +97,6 @@ public class UserController {
 		user.setEmail(email);
 		user.setUsername(username);
 		user.setPasswordHash(DEFAULT_PASSWORD);
-		
-		log.debug(user);
 		
 		//save user
 		User savedUser = userDao.save(user);		
@@ -147,7 +143,6 @@ public class UserController {
 			redirect.addFlashAttribute("user", updatedUser);
 			
 		}else{
-			log.debug("\n\nOperation not permitted");
 		  	throw new AuthorizationException("No Permission"); 
 		}
         
@@ -232,7 +227,6 @@ public class UserController {
 			model.addAttribute("user", user);
 			
 		}else{
-			log.debug("\nOperation not permitted");
 		  	throw new AuthorizationException("No Permission"); 
 		}
 
@@ -281,7 +275,6 @@ public class UserController {
 	
 		
 	private boolean isCustomerWithPermission(String permission, String id){
-		log.debug("is customer : " + SecurityUtils.getSubject().hasRole(CUSTOMER_ROLE) + " && has permission " + permission + DELIM + id + " : " + SecurityUtils.getSubject().isPermitted(permission + DELIM + id));
 		return SecurityUtils.getSubject().hasRole(CUSTOMER_ROLE) && 
 			SecurityUtils.getSubject().isPermitted(permission + DELIM + id);
 		

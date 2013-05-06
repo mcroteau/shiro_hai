@@ -37,7 +37,6 @@ public class ShiroHaiRealm extends AuthorizingRealm {
 
         if (username == null)  throw new AccountException("Null usernames are not allowed by this realm.");
         String password = userDao.getUserPassword(username);
-        System.out.println("44 doGetAuthenticationInfo " + username + " : " + password);
                 
         if (password == null) throw new UnknownAccountException("No account found for user [" + username + "]");
         AuthenticationInfo info = buildAuthenticationInfo(username, password.toCharArray());
@@ -54,18 +53,13 @@ public class ShiroHaiRealm extends AuthorizingRealm {
 
         String username = (String) getAvailablePrincipal(principals);
 		
-		log.debug("username : " + username);
         Set<String> roleNames = userDao.getUserRoles(username);
-		log.debug("roleNames : " + roleNames);
-		
-        Set<String> permissions = null;
+		Set<String> permissions = null;
         if (permissionsLookupEnabled) permissions = userDao.getUserPermissions(username);
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roleNames);
         info.setStringPermissions(permissions);
         
-		log.debug("info : " + info);
-		
         return info;
     }
 
