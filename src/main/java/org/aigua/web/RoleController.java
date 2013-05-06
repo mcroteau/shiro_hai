@@ -22,6 +22,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import org.apache.log4j.Logger;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Date; 
