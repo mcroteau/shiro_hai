@@ -9,10 +9,6 @@
 <body>
 	<div class="container">
 		
-		<shirohai:userId/>
-		<shirohai:email/>
-		<shirohai:name/>
-		
 		<div class="row">
 			<div class="span12">
 				<%@include file="/jsp/common/navigation.jsp" %>
@@ -22,7 +18,7 @@
 		<shiro:notAuthenticated>
 			<div class="row">
 				<div class="span12">
-					<a href="/shiro_hai/app/auth/login">Login</a>
+					<a href="/shiro_hai/app/auth/login">Login</a> | <a href="/shiro_hai/app/auth/registration">Register</a>
 				</div>
 			</div>
 		</shiro:notAuthenticated>
@@ -31,6 +27,7 @@
 			<div class="row">
 				<div class="span12">
 					welcome back <shiro:principal/> ! | <a href="/shiro_hai/app/auth/logout">Logout</a>
+					| <a href="/shiro_hai/app/user/edit/<shirohai:userId/>">My Account</a>
 				</div>
 			</div>
 		</shiro:authenticated>

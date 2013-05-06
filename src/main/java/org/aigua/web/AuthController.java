@@ -39,6 +39,10 @@ import java.util.List;
 import org.aigua.domain.User;
 import org.aigua.dao.UserDao;
 
+import org.aigua.domain.Role;
+import org.aigua.dao.RoleDao;
+
+import static org.aigua.common.ShiroHaiConstants.*;
 
 @Controller
 @RequestMapping("/auth")
@@ -48,15 +52,56 @@ public class AuthController{
 
 	@Autowired
 	private UserDao userDao;
+		
+	@Autowired
+	private RoleDao roleDao;	
 	
-	@RequestMapping(value="/login", method=RequestMethod.GET)
+	
+	@RequestMapping(value="/registration", method=RequestMethod.GET)
 	public String login(ModelMap model,
 		  				final RedirectAttributes redirect){
 			
-		model.addAttribute("title", "Login");
+		model.addAttribute("title", "Register");
+		return "auth/registration";
+	}		
+	
+
+	@RequestMapping(value="/register", method=RequestMethod.POST)
+	public String login(ModelMap model,
+					    HttpServletRequest request,
+		  				final RedirectAttributes redirect){
 		
-		Map<String, ?> flash = redirect.getFlashAttributes();
-		log.debug(flash);
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		String username = request.getParameter("username");
+		String password = request.getParameter("passwordHash");
+		
+		User user = new User();
+		user.setName(name);
+		user.setEmail(email);
+		user.setUsername(username);
+		user.setPasswordHash(password);
+					
+		User savedUser = userDao.save(user);
+		
+		Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
+		userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
+		
+		userDao.saveUserPermission(savedUser.getId(), USER_EDIT + DELIM + savedUser.getId());
+		userDao.saveUserPermission(savedUser.getId(), USER_UPDATE + DELIM + savedUser.getId());
+		
+		redirect.addFlashAttribute("user", user);
+		redirect.addFlashAttribute("message", "You have successfully registered!  Log in with you new account credentials");
+
+		return "redirect:/app/auth/login";
+	}	
+	
+	
+		
+	@RequestMapping(value="/login", method=RequestMethod.GET)
+	public String login(ModelMap model){
+			
+		model.addAttribute("title", "Login");
 		
 		return "auth/login";
 	}	

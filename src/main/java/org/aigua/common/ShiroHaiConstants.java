@@ -16,4 +16,10 @@ public final class ShiroHaiConstants {
 	
 	public static final String REPLACE_NAME = "{{NAME}}";
 	
+	public static int RESULTS_PER_PAGE = 10;
+	public static String USER_EDIT = "user:edit";
+	public static String USER_UPDATE = "user:update";
+	public static String DELIM = ":";
+	
+	
 }

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +45,6 @@ public class RoleController {
 	@Autowired
 	private RoleDao roleDao;	
 	
-	private static int RESULTS_PER_PAGE = 10;
 	
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
@@ -51,7 +52,6 @@ public class RoleController {
 		roles.add(ADMIN_ROLE);
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-	    	System.out.println("\n\nOperation not permitted");
 	      	throw new AuthorizationException("No Permission"); 
 	    }
 	
@@ -62,19 +62,25 @@ public class RoleController {
 	
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public String saveRole(ModelMap model, @RequestBody String roleJson){
-		try {
-			
-			ObjectMapper mapper = new ObjectMapper();
-			Role role = mapper.readValue(roleJson, Role.class);
-			Role savedRole = roleDao.save(role);		
-			model.addAttribute("role", savedRole);
-			
-		}catch(Exception e){
-			e.printStackTrace();
+	public String saveRole(ModelMap model,
+						   HttpServletRequest request,
+					   	   final RedirectAttributes redirect){
+		
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+		  	throw new AuthorizationException("No Permission"); 
 		}
-	
-		return "role/action";
+		
+		String name = request.getParameter("name");
+		
+		Role role = new Role();
+		role.setName(name);
+		
+		Role savedRole = roleDao.save(role);		
+		
+		redirect.addFlashAttribute("role", savedRole);
+		redirect.addFlashAttribute("message", "Successfully saved role " + savedRole.getName());
+		
+		return "redirect:/app/role/list";
 	}
 	
 	
@@ -85,11 +91,10 @@ public class RoleController {
 					   HttpServletRequest request, 
 					   @PathVariable String id){
 		
-		if (!SecurityUtils.getSubject().isPermitted("role:2:edit")){
-			System.out.println("\n\nOperation not permitted");
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
 		  	throw new AuthorizationException("No Permission"); 
 		}
-						
+
 		Role role = roleDao.findById(Integer.parseInt(id));
 		model.addAttribute("title", "Edit Role : " + id);
 		model.addAttribute("role", role);
@@ -112,6 +117,59 @@ public class RoleController {
 		return "role/show";
 	}	
 	
+
+	
+	@RequestMapping(value="/update/{id}", method=RequestMethod.POST)
+	public String updateRole(ModelMap model, 
+		 					 HttpServletRequest request,
+		  					 final RedirectAttributes redirect){
+			
+	
+				
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+		  	throw new AuthorizationException("No Permission"); 
+		}
+		
+  		String id = request.getParameter("id");
+  		String name = request.getParameter("name");
+		
+		Role role = new Role();
+		role.setId(Integer.parseInt(id));
+		role.setName(name);
+		roleDao.update(role);
+		
+		Role updatedRole = roleDao.findById(Integer.parseInt(id));
+		
+		redirect.addFlashAttribute("role", updatedRole);
+		redirect.addFlashAttribute("message", "Successfully updated role " + id);
+		
+		return "redirect:/app/role/list";
+	}
+	
+	
+		
+	
+	@RequestMapping(value="/delete/{id}", method=RequestMethod.POST)
+	public String deleteRole(ModelMap model, 
+						     @PathVariable String id,
+		  					 final RedirectAttributes redirect){
+			
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+		  	throw new AuthorizationException("No Permission"); 
+		}
+
+		Role role = roleDao.findById(Integer.parseInt(id));	
+		roleDao.delete(role.getId());
+		
+		
+		redirect.addFlashAttribute("role", role);
+		redirect.addFlashAttribute("message", "Successfully deleted role " + id);
+		
+		return "redirect:/app/role/list";
+		
+	}	
+	
+	
 	
 	
 	@RequestMapping(value="/list", method=RequestMethod.GET)
@@ -119,9 +177,10 @@ public class RoleController {
 				       HttpServletRequest request, 
 					   @RequestParam(value="offset", required = false ) String offset,
 					   @RequestParam(value="max", required = false ) String max,
-					   @RequestParam(value="page", required = false ) String page){
+					   @RequestParam(value="page", required = false ) String page,
+					   final RedirectAttributes redirect){
 		
-	
+		Map<String, ?> flash = redirect.getFlashAttributes();
 		
 		if(page == null){
 			page = "1";
@@ -129,7 +188,7 @@ public class RoleController {
 		
 		List<Role> roles;
 		
-		if(offset != null) {
+		if(offset != null && !flash.isEmpty()) {
 			int m = RESULTS_PER_PAGE;
 			if(max != null){
 				m = Integer.parseInt(max);
@@ -153,49 +212,4 @@ public class RoleController {
 	}
 	
 	
-	
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public String updateRole(ModelMap model, 
-							 @PathVariable String id,
-							 @RequestBody String roleJson){
-		try {
-			
-			ObjectMapper mapper = new ObjectMapper();
-			Role role = mapper.readValue(roleJson, Role.class);
-			
-			role.setId(Integer.parseInt(id));
-			roleDao.update(role);
-			
-			Role updatedRole = roleDao.findById(Integer.parseInt(id));
-			model.addAttribute("updatedRole", updatedRole);
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return "role/action";
-	}
-	
-	
-		
-	
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public String deleteRole(ModelMap model, 
-						     @PathVariable String id){
-			
-		System.out.println("\n\n id : " + Integer.parseInt(id) + "\n\n");
-		Role role = roleDao.findById(Integer.parseInt(id));	
-		
-		System.out.println(role);
-		roleDao.delete(role.getId());
-		
-		List<Role> roles = roleDao.findAll();
-	 	model.addAttribute("roles", roles);
-	
-		return "role/action";
-		
-	}	
-	
-	
-
 }

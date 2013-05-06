@@ -63,12 +63,6 @@ public class UserController {
 	private RoleDao roleDao;	
 	
 	
-	private static int RESULTS_PER_PAGE = 10;
-	private static String USER_EDIT = "user:edit";
-	private static String USER_UPDATE = "user:update";
-	private static String DELIM = ":";
-	
-
 	@RequestMapping(value="/create", method=RequestMethod.GET)
 	public String create(ModelMap model, HttpServletRequest request){
 		
@@ -89,41 +83,38 @@ public class UserController {
 						   HttpServletRequest request,
 		   				   final RedirectAttributes redirect){
 		
-		try {
-			
-			log.debug(request);
-			
-			String name = request.getParameter("name");
-			String email = request.getParameter("email");
-			String username = request.getParameter("username");
-			
-
-			User user = new User();
-			user.setName(name);
-			user.setEmail(email);
-			user.setUsername(username);
-			user.setPasswordHash(DEFAULT_PASSWORD);
-			
-			log.debug(user);
-			
-			//save user
-			User savedUser = userDao.save(user);		
-			model.addAttribute("user", savedUser);
-			
-			redirect.addFlashAttribute("user", savedUser);
-			redirect.addFlashAttribute("message", "successfully saved user : " + savedUser.getUsername());
-			
-			//save user roles
-			Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
-			userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
-			
-			userDao.saveUserPermission(savedUser.getId(), USER_EDIT + DELIM + savedUser.getId());
-			userDao.saveUserPermission(savedUser.getId(), USER_UPDATE + DELIM + savedUser.getId());
-			
-			
-		}catch(Exception e){
-			e.printStackTrace();
+		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+		  	throw new AuthorizationException("No Permission"); 
 		}
+		
+		log.debug(request);
+		
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		String username = request.getParameter("username");
+		
+
+		User user = new User();
+		user.setName(name);
+		user.setEmail(email);
+		user.setUsername(username);
+		user.setPasswordHash(DEFAULT_PASSWORD);
+		
+		log.debug(user);
+		
+		//save user
+		User savedUser = userDao.save(user);		
+		
+		//save user roles
+		Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
+		userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
+		
+		userDao.saveUserPermission(savedUser.getId(), USER_EDIT + DELIM + savedUser.getId());
+		userDao.saveUserPermission(savedUser.getId(), USER_UPDATE + DELIM + savedUser.getId());
+		
+		
+		redirect.addFlashAttribute("user", savedUser);
+		redirect.addFlashAttribute("message", "successfully saved user : " + savedUser.getUsername());
 
 		return "redirect:user/list";
 	}
@@ -132,8 +123,8 @@ public class UserController {
 
 	@RequestMapping(value="/{id}/update", method=RequestMethod.POST)
 	public String updateUser(ModelMap model,
-					   HttpServletRequest request,
-					   final RedirectAttributes redirect){
+					   		 HttpServletRequest request,
+					  	 	 final RedirectAttributes redirect){
 			
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
@@ -154,7 +145,6 @@ public class UserController {
 			
 			User updatedUser = userDao.findById(Integer.parseInt(id));
 			redirect.addFlashAttribute("user", updatedUser);
-			
 			
 		}else{
 			log.debug("\n\nOperation not permitted");
@@ -184,7 +174,6 @@ public class UserController {
 					   		 final RedirectAttributes redirect){
 			
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-			log.debug("\n\nOperation not permitted");
 		  	throw new AuthorizationException("No Permission"); 
 		}
 								

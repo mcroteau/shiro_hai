@@ -42,6 +42,11 @@ public class UserMockDaoImpl implements UserDao {
 	public void saveUserRole(int userId, int roleId){}
 		
 	public void saveUserPermission(int userId, String permission){}
+	
+	public void deleteUserRoles(int userId){}
+	
+	public void deleteUserPermissions(int userId){}
+	
 		
 	public User update(User user){
 		return getMockUsers(1).get(1);
