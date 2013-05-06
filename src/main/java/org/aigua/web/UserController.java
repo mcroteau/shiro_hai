@@ -229,7 +229,6 @@ public class UserController {
 		}else{
 		  	throw new AuthorizationException("No Permission"); 
 		}
-
 		
 		return "user/edit";
 	}	
