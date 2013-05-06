@@ -11,9 +11,9 @@
          		<ul class="nav">
            			<li class="${homeActive}"><a href="/shiro_hai/">Home</a></li>
            			<li class="${listPropertyActive}"><a href="/shiro_hai/app/user/list?offset=0&max=10">List Users</a></li>
-           			<li class="${addPropertyActive}"><a href= "/shiro_hai/app/user/create">Add User</a></li>
+           			<li class="${addPropertyActive}"><a href= "/shiro_hai/app/user/create">Create User</a></li>
            			<li class="${listPropertyActive}"><a href="/shiro_hai/app/role/list?offset=0&max=10">List Roles</a></li>
-           			<li class="${addPropertyActive}"><a href= "/shiro_hai/app/role/create">Add Role</a></li>
+           			<li class="${addPropertyActive}"><a href= "/shiro_hai/app/role/create">Create Role</a></li>
          		</ul>
        		</div>
     	</div>

@@ -36,6 +36,7 @@ import org.aigua.dao.RoleDao;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.session.Session;
 
 import static org.aigua.common.ShiroHaiConstants.*;
 
@@ -52,11 +53,21 @@ public class RoleController {
 	
 	
 	@RequestMapping(value="/create", method=RequestMethod.GET)
-	public String create(ModelMap model, HttpServletRequest request){
+	public String create(ModelMap model, 
+						 HttpServletRequest request,
+						 final RedirectAttributes redirect){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-	      	throw new AuthorizationException("No Permission"); 
-	    }
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to create new roles");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to create new roles. Please login");
+				return "redirect:/app/auth/login";
+			}
+		}
 	
 		model.addAttribute("title", "Create New Role");
 		model.addAttribute("addRoleActive", "active");
@@ -70,7 +81,16 @@ public class RoleController {
 					   	   final RedirectAttributes redirect){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to create new roles");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to create new roles. Please login");
+				return "redirect:/app/auth/login";
+			}
 		}
 		
 		String name = request.getParameter("name");
@@ -92,10 +112,19 @@ public class RoleController {
 	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
 	public String edit(ModelMap model,
 					   HttpServletRequest request, 
-					   @PathVariable String id){
+					   @PathVariable String id,
+					   final RedirectAttributes redirect){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to edit roles");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to edit roles. Please login");
+				return "redirect:/app/auth/login";
+			}
 		}
 
 		Role role = roleDao.findById(Integer.parseInt(id));
@@ -127,10 +156,16 @@ public class RoleController {
 		 					 HttpServletRequest request,
 		  					 final RedirectAttributes redirect){
 			
-	
-				
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to update roles");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to update roles. Please login");
+				return "redirect:/app/auth/login";
+			}
 		}
 		
   		String id = request.getParameter("id");
@@ -158,9 +193,17 @@ public class RoleController {
 		  					 final RedirectAttributes redirect){
 			
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to delete roles");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to delete roles. Please login");
+				return "redirect:/app/auth/login";
+			}
 		}
-
+		
 		Role role = roleDao.findById(Integer.parseInt(id));	
 		roleDao.delete(role.getId());
 		
@@ -207,7 +250,7 @@ public class RoleController {
 		model.addAttribute("roles", roles);
 		model.addAttribute("total", count);
 		
-		model.addAttribute("title", "List Properties");
+		model.addAttribute("title", "List Roles");
 		model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
 		model.addAttribute("activePage", page);
 		

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.ModelMap;
 
-
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
@@ -22,6 +21,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,11 +65,21 @@ public class UserController {
 	
 	
 	@RequestMapping(value="/create", method=RequestMethod.GET)
-	public String create(ModelMap model, HttpServletRequest request){
+	public String create(ModelMap model, 
+	                     HttpServletRequest request,
+						 final RedirectAttributes redirect){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-	      	throw new AuthorizationException("No Permission"); 
-	    }
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to create new users");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to create new users. Please login");
+				return "redirect:/app/auth/login";
+			}
+		}
 	
 		model.addAttribute("title", "Create New User");
 		model.addAttribute("addUserActive", "active");
@@ -84,7 +94,15 @@ public class UserController {
 		   				   final RedirectAttributes redirect){
 		
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			if(SecurityUtils.getSubject().isAuthenticated()){
+				redirect.addFlashAttribute("message", "You must be an admin to create new users");
+				Session session = SecurityUtils.getSubject().getSession();
+				User user = (User)session.getAttribute("user");
+				return "redirect:/app/user/show/" + user.getId();
+			}else{	
+				redirect.addFlashAttribute("message", "You must be an admin to create new users. Please login");
+				return "redirect:/app/auth/login";
+			}
 		}
 		
 		String name = request.getParameter("name");
@@ -143,7 +161,17 @@ public class UserController {
 			redirect.addFlashAttribute("user", updatedUser);
 			
 		}else{
-		  	throw new AuthorizationException("No Permission"); 
+			if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+				if(SecurityUtils.getSubject().isAuthenticated()){
+					redirect.addFlashAttribute("message", "You must be an admin to update  other users");
+					Session session = SecurityUtils.getSubject().getSession();
+					User user = (User)session.getAttribute("user");
+					return "redirect:/app/user/show/" + user.getId();
+				}else{	
+					redirect.addFlashAttribute("message", "You must be an admin to update users. Please login");
+					return "redirect:/app/auth/login";
+				}
+			}
 		}
         
         
@@ -169,7 +197,17 @@ public class UserController {
 					   		 final RedirectAttributes redirect){
 			
 		if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
-		  	throw new AuthorizationException("No Permission"); 
+			if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+				if(SecurityUtils.getSubject().isAuthenticated()){
+					redirect.addFlashAttribute("message", "You must be an admin to delete other users");
+					Session session = SecurityUtils.getSubject().getSession();
+					User user = (User)session.getAttribute("user");
+					return "redirect:/app/user/show/" + user.getId();
+				}else{	
+					redirect.addFlashAttribute("message", "You must be an admin to delete users. Please login");
+					return "redirect:/app/auth/login";
+				}
+			}
 		}
 								
 		User user = userDao.findById(Integer.parseInt(id));	
@@ -187,6 +225,7 @@ public class UserController {
 		
 	}
 		
+	
 	
 	@RequestMapping(value="/show/{id}", method=RequestMethod.GET)
 	public String show(ModelMap model,
@@ -208,9 +247,11 @@ public class UserController {
 	}	
 
 
+
 	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
 	public String edit(ModelMap model,
-					   HttpServletRequest request, 
+					   HttpServletRequest request,
+					   final RedirectAttributes redirect,					 
 					   @PathVariable String id){
 		
 		if (isCustomerWithPermission(USER_EDIT, id) || SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
@@ -227,7 +268,20 @@ public class UserController {
 			model.addAttribute("user", user);
 			
 		}else{
-		  	throw new AuthorizationException("No Permission"); 
+			if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+				if (!SecurityUtils.getSubject().hasRole(ADMIN_ROLE)){
+					if(SecurityUtils.getSubject().isAuthenticated()){
+						redirect.addFlashAttribute("message", "You must be an admin to edit other users");
+						Session session = SecurityUtils.getSubject().getSession();
+						User user = (User)session.getAttribute("user");
+						return "redirect:/app/user/show/" + user.getId();
+					}else{	
+						redirect.addFlashAttribute("message", "You must be an admin to edit users. Please login");
+						return "redirect:/app/auth/login";
+					}
+				}
+			}
+
 		}
 		
 		return "user/edit";
@@ -265,7 +319,7 @@ public class UserController {
 		model.addAttribute("users", users);
 		model.addAttribute("total", count);
 		
-		model.addAttribute("title", "List Properties");
+		model.addAttribute("title", "List Users");
 		model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
 		model.addAttribute("activePage", page);
 		
@@ -275,10 +329,8 @@ public class UserController {
 		
 	private boolean isCustomerWithPermission(String permission, String id){
 		return SecurityUtils.getSubject().hasRole(CUSTOMER_ROLE) && 
-			SecurityUtils.getSubject().isPermitted(permission + DELIM + id);
-		
+			SecurityUtils.getSubject().isPermitted(permission + DELIM + id);		
 	}
 		
 
-	
 }

@@ -22,7 +22,6 @@
 	
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-	    <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
 	    <property name="realm" ref="shiroRealm"/>
 	</bean>
 	
