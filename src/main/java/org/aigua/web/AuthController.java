@@ -26,10 +26,12 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.AuthenticationException;
+import java.io.IOException;
 
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import sun.misc.BASE64Decoder;
 
 import org.springframework.ui.ModelMap;
 
@@ -88,14 +90,15 @@ public class AuthController{
 		// Object salt = rng.nextBytes();
 		//Now hash the plain-text password with the random salt and multiple
 		//iterations and then Base64-encode the value (requires less space than Hex):
-		String hashedPasswordBase64 = new Sha256Hash(password, username, 1024).toHex();
+		// Sha256Hash p = new Sha256Hash(password, username, 1024);
+		// String encodedPassword = p.toBase64();
 		
 		
 		User user = new User();
 		user.setName(name);
 		user.setEmail(email);
 		user.setUsername(username);
-		user.setPasswordHash(hashedPasswordBase64);
+		user.setPasswordHash(password);
 		// user.setPasswordSalt(salt);
 		
 				
@@ -136,22 +139,17 @@ public class AuthController{
 		model.addAttribute("username", creds.get("username"));
 		
 		try{
-
-			byte[] bytes = creds.get("password").getBytes();
-			log.debug(bytes);
-		    Sha256Hash password = new Sha256Hash( creds.get("password"), creds.get("username"), 1024 );
-			log.debug(password);
-			log.debug(password.toString());
 			
-			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), password.toHex() );
+			
+			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), creds.get("password"));
 			// token.setRememberMe(true);
 
-			Subject currentUser = SecurityUtils.getSubject();
-			currentUser.login(token);
+			Subject subject = SecurityUtils.getSubject();
+			subject.login(token);
 			
 			User user = userDao.findByUsername(creds.get("username"));
 			
-			Session session = currentUser.getSession();
+			Session session = subject.getSession();
 			session.setAttribute( "user", user );
 
 			
@@ -165,7 +163,7 @@ public class AuthController{
 			eae.printStackTrace();
 		} catch ( AuthenticationException ae ) {
 			ae.printStackTrace();
-		}
+		} 
 
 		return "auth/success";
 	}	

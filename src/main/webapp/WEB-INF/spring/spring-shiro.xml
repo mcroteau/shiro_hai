@@ -10,16 +10,19 @@
 	
 		
 	<bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.Sha256CredentialsMatcher">
-		<property name="hashIterations" value="1024"/>
+		<!-- <property name="hashIterations" value="1024"/>
 		<property name="storedCredentialsHexEncoded" value="false"/>
-		<property name="hashSalted" value="true"/>
+		<property name="hashSalted" value="true"/> -->
 	</bean>
 	
 	
 	<bean id="shiroRealm" class="org.aigua.realm.ShiroHaiRealm">
-		<property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>	
+		<!-- <property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>	  -->
 	</bean>
 	
+	<!-- <bean id="shiroRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+		<property name="credentialsMatcher" ref="hashedCredentialsMatcher"/>	
+	</bean> -->
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 	    <property name="realm" ref="shiroRealm"/>
