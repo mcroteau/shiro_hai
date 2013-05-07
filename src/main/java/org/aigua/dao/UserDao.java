@@ -16,11 +16,11 @@ public interface UserDao {
 	
 	public List<User> findAllOffset(int max, int offset);
 	
-	public User save(User user);
+	public void save(User user);
 	
-	public User update(User user);
+	public void update(User user);
 	
-	public User delete(int id);
+	public void delete(int id);
 	
 	public String getUserPassword(String username);
 	

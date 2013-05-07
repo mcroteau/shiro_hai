@@ -27,6 +27,10 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.AuthenticationException;
 
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+
 import org.springframework.ui.ModelMap;
 
 import org.apache.log4j.Logger;
@@ -72,18 +76,31 @@ public class AuthController{
 					    HttpServletRequest request,
 		  				final RedirectAttributes redirect){
 		
+			
+
+		
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		String username = request.getParameter("username");
 		String password = request.getParameter("passwordHash");
 		
+		// RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+		// Object salt = rng.nextBytes();
+		//Now hash the plain-text password with the random salt and multiple
+		//iterations and then Base64-encode the value (requires less space than Hex):
+		String hashedPasswordBase64 = new Sha256Hash(password, username, 1024).toHex();
+		
+		
 		User user = new User();
 		user.setName(name);
 		user.setEmail(email);
 		user.setUsername(username);
-		user.setPasswordHash(password);
-					
-		User savedUser = userDao.save(user);
+		user.setPasswordHash(hashedPasswordBase64);
+		// user.setPasswordSalt(salt);
+		
+				
+		userDao.save(user);
+		User savedUser = userDao.findByUsername(username);
 		
 		Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
 		userDao.saveUserRole(savedUser.getId(), defaultRole.getId());
@@ -119,8 +136,14 @@ public class AuthController{
 		model.addAttribute("username", creds.get("username"));
 		
 		try{
+
+			byte[] bytes = creds.get("password").getBytes();
+			log.debug(bytes);
+		    Sha256Hash password = new Sha256Hash( creds.get("password"), creds.get("username"), 1024 );
+			log.debug(password);
+			log.debug(password.toString());
 			
-			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), creds.get("password") );
+			UsernamePasswordToken token = new UsernamePasswordToken( creds.get("username"), password.toHex() );
 			// token.setRememberMe(true);
 
 			Subject currentUser = SecurityUtils.getSubject();
@@ -129,7 +152,7 @@ public class AuthController{
 			User user = userDao.findByUsername(creds.get("username"));
 			
 			Session session = currentUser.getSession();
-			session.setAttribute( "user", user);
+			session.setAttribute( "user", user );
 
 			
 		} catch ( UnknownAccountException uae ) { 

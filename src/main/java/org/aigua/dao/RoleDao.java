@@ -15,10 +15,10 @@ public interface RoleDao {
 	
 	public List<Role> findAllOffset(int max, int offset);
 	
-	public Role save(Role role);
+	public void save(Role role);
 	
-	public Role update(Role role);
+	public void update(Role role);
 	
-	public Role delete(int id);
+	public void delete(int id);
 	
 }

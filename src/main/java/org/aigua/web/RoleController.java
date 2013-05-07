@@ -40,6 +40,7 @@ import org.apache.shiro.session.Session;
 
 import static org.aigua.common.ShiroHaiConstants.*;
 
+import org.aigua.domain.User;
 
 @Controller
 @RequestMapping("/role")
@@ -98,7 +99,8 @@ public class RoleController {
 		Role role = new Role();
 		role.setName(name);
 		
-		Role savedRole = roleDao.save(role);		
+		roleDao.save(role);		
+		Role savedRole = roleDao.findByName(name);
 		
 		redirect.addFlashAttribute("role", savedRole);
 		redirect.addFlashAttribute("message", "Successfully saved role " + savedRole.getName());

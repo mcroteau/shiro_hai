@@ -34,10 +34,14 @@ public class UserMockDaoImpl implements UserDao {
 	public List<User> search(String term){
 		return getMockUsers(MAX);
 	}
+
 	
-	public User save(User user){
-		return getMockUsers(1).get(1);
-	}
+	public void save(User user){}
+		
+	public void update(User user){}
+	
+	public void delete(int id){}
+
 
 	public void saveUserRole(int userId, int roleId){}
 		
@@ -47,14 +51,6 @@ public class UserMockDaoImpl implements UserDao {
 	
 	public void deleteUserPermissions(int userId){}
 	
-		
-	public User update(User user){
-		return getMockUsers(1).get(1);
-	}
-	
-	public User delete(int id){
-		return getMockUsers(1).get(1);
-	}
 	
 	public int count(){
 		return 10;

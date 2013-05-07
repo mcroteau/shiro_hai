@@ -109,29 +109,24 @@ public class UserJdbcDaoImpl extends JdbcDaoSupport implements UserDao  {
 	
 
 
-	public User save(User user) {
+	public void save(User user) {
 		int id = jdbcTemplate.queryForInt(nextIdSql, new Object[0]);
 		jdbcTemplate.update(insertSql, new Object[] { 
 			id, user.getName(), user.getEmail(), user.getUsername(), user.getPasswordHash()  
 		});
-		User savedUser = findById(id);
-		return savedUser;
 	}
 
 	
-	public User update(User user) {
+	public void update(User user) {
 		jdbcTemplate.update(updateSql, new Object[] { 
 			user.getName(), user.getEmail(), user.getUsername(), user.getPasswordHash(), user.getId()  
 		});
-
-		return findById(user.getId());
 	}
 
 	
-	public User delete(int id) {
+	public void delete(int id) {
 		User user = findById(id);
 		jdbcTemplate.update(deleteSql, new Object[] {id });
-		return user;
 	}
 
 	

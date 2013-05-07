@@ -92,28 +92,24 @@ public class RoleJdbcDaoImpl extends JdbcDaoSupport implements RoleDao {
 	}
 	
 	
-	public Role save(Role role) {
+	public void save(Role role) {
 		int id = jdbcTemplate.queryForInt(nextIdSql, new Object[0]);
 		jdbcTemplate.update(insertSql, new Object[] { 
 			id, role.getName()  
 		});
-		Role savedRole = findById(id);
-		return savedRole;
 	}
 	
 	
-	public Role update(Role role) {
+	public void update(Role role) {
 		jdbcTemplate.update(updateSql, new Object[] { 
 			role.getName(), role.getId()  
 		});
-		return findById(role.getId());
 	}
 	
 	
-	public Role delete(int id) {
+	public void delete(int id) {
 		Role role = findById(id);
 		jdbcTemplate.update(deleteSql, new Object[] {id });
-		return role;
 	}
 	
 

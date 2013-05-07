@@ -7,7 +7,8 @@ public class User{
 	private int id;
 	private String username;
 	private String passwordHash;
-
+	// private String passwordSalt;
+	
 	private String name;
 	private String email;
 	
@@ -41,7 +42,16 @@ public class User{
 		this.passwordHash = passwordHash;
 	}
 	
-		
+	
+	// public String getPasswordSalt(){
+	// 	return this.passwordSalt;
+	// }
+	// 
+	// public void setPasswordSalt(String passwordSalt){
+	// 	this.passwordSalt = passwordSalt;
+	// }
+	
+			
 	public String getName(){
 		return this.name;
 	}

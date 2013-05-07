@@ -37,8 +37,10 @@ public class ShiroHaiRealm extends AuthorizingRealm {
 
         if (username == null)  throw new AccountException("Null usernames are not allowed by this realm.");
         String password = userDao.getUserPassword(username);
-                
+         
+		log.debug(password);        
         if (password == null) throw new UnknownAccountException("No account found for user [" + username + "]");
+		log.debug(password.toCharArray());
         AuthenticationInfo info = buildAuthenticationInfo(username, password.toCharArray());
 
         return info;

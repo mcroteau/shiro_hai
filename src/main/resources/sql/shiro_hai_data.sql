@@ -1,10 +1,10 @@
 
+insert into shiro_user (id, password_hash, password_salt, username, name, email)
+	values (1, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '', 'admin', 'admin', 'admin@email.com');
 insert into shiro_user (id, password_hash, username, name, email)
-	values (1, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'admin', 'admin', 'admin@email.com');
+	values (2, 'dea26157fa355301663174eac368538cff8939f36681d6712dedba439ab98b70', '', 'customer1', 'customer1', 'customer1@email.com');
 insert into shiro_user (id, password_hash, username, name, email)
-	values (2, 'dea26157fa355301663174eac368538cff8939f36681d6712dedba439ab98b70', 'customer1', 'customer1', 'customer1@email.com');
-insert into shiro_user (id, password_hash, username, name, email)
-	values (3, 'c8c7cb5b9e8f7a1b3d1d02602ada62327132391dbe0e8ee07913cd550eea1f3b', 'customer2', 'customer2', 'customer2@email.com');
+	values (3, 'c8c7cb5b9e8f7a1b3d1d02602ada62327132391dbe0e8ee07913cd550eea1f3b', '', 'customer2', 'customer2', 'customer2@email.com');
 -- passwords 'admin','customer1','customer2' --
   	
 

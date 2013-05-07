@@ -117,7 +117,8 @@ public class UserController {
 		user.setPasswordHash(DEFAULT_PASSWORD);
 		
 		//save user
-		User savedUser = userDao.save(user);		
+		userDao.save(user);		
+		User savedUser = userDao.findByUsername(username);
 		
 		//save user roles
 		Role defaultRole = roleDao.findByName(CUSTOMER_ROLE);
