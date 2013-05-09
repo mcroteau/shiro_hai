@@ -1,10 +1,10 @@
 
 CREATE TABLE shiro_user (
 	id bigint NOT NULL,
-	name character varying(255) NOT NULL,
-	email character varying(255) NOT NULL,
-	username character varying(255) NOT NULL,
-	password_hash character varying(255) NOT NULL,
+	name character varying(55) NOT NULL,
+	email character varying(55) NOT NULL,
+	username character varying(55) NOT NULL,
+	password_hash character varying(55) NOT NULL,
 	CONSTRAINT shiro_user_pkey PRIMARY KEY (id),
 	CONSTRAINT shiro_user_username_key UNIQUE (username)
 )
@@ -17,7 +17,7 @@ ALTER TABLE shiro_user
 
 CREATE TABLE shiro_role (
 	id bigint NOT NULL,
-	name character varying(255) NOT NULL,
+	name character varying(55) NOT NULL,
 	CONSTRAINT shiro_role_pkey PRIMARY KEY (id),
 	CONSTRAINT shiro_role_name_key UNIQUE (name)
 )
@@ -31,7 +31,7 @@ ALTER TABLE shiro_role
 
 CREATE TABLE shiro_role_permissions (
 	shiro_role_id bigint,
-	permissions_string character varying(255),
+	permissions_string character varying(55),
 	CONSTRAINT fk389b46c98ba4b1d FOREIGN KEY (shiro_role_id)
 	    REFERENCES shiro_role (id) MATCH SIMPLE
 	    ON UPDATE NO ACTION ON DELETE NO ACTION
@@ -47,7 +47,7 @@ ALTER TABLE shiro_role_permissions
 
 CREATE TABLE shiro_user_permissions (
 	shiro_user_id bigint,
-	permissions_string character varying(255),
+	permissions_string character varying(55),
 	CONSTRAINT fk34555a9eade50efd FOREIGN KEY (shiro_user_id)
 	    REFERENCES shiro_user (id) MATCH SIMPLE
 	    ON UPDATE NO ACTION ON DELETE NO ACTION
