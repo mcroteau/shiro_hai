@@ -1,7 +1,7 @@
 <%@ page import="java.lang.String" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ taglib prefix="shirohai" uri="/WEB-INF/taglib/ShiroHai.tld"%>
-<html>
+<html lang="en">
 <head>
 	<%@include file="/jsp/common/head.jsp" %>
     <sitemesh:write property='head'/>

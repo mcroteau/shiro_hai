@@ -4,7 +4,7 @@ CREATE TABLE shiro_user (
 	name character varying(55) NOT NULL,
 	email character varying(55) NOT NULL,
 	username character varying(55) NOT NULL,
-	password_hash character varying(55) NOT NULL,
+	password_hash character varying(155) NOT NULL,
 	CONSTRAINT shiro_user_pkey PRIMARY KEY (id),
 	CONSTRAINT shiro_user_username_key UNIQUE (username)
 )
